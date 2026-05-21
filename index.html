@@ -169,14 +169,14 @@
         }
 
         .btn-delete {
-            background: rgba(200, 60, 40, 0.8);
+            background: linear-gradient(135deg, #d43f1a 0%, #a62e0f 100%);
             border: none;
             border-radius: 20px;
             color: white;
             font-size: 12px;
             font-weight: 600;
             cursor: pointer;
-            padding: 6px 14px;
+            padding: 8px 16px;
             transition: 0.2s;
             display: inline-flex;
             align-items: center;
@@ -184,9 +184,9 @@
         }
 
         .btn-delete:hover {
-            background: #e6392e;
             transform: scale(1.02);
-            box-shadow: 0 2px 8px rgba(230, 57, 46, 0.4);
+            box-shadow: 0 4px 12px rgba(212, 63, 26, 0.4);
+            background: linear-gradient(135deg, #e6392e 0%, #c43a15 100%);
         }
 
         .screen {
@@ -370,11 +370,38 @@
             font-weight: bold;
         }
 
+        .toast-notification {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #1ad46f;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: bold;
+            z-index: 9999;
+            animation: fadeInOut 2s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .toast-error {
+            background: #d43f1a;
+        }
+
+        @keyframes fadeInOut {
+            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
+            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
+            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+        }
+
         @media (max-width: 900px) {
             .diamond-row { grid-template-columns: 1fr; gap: 12px; }
             .form-card { padding: 22px 18px; }
             .admin-table th, .admin-table td { padding: 8px 6px; font-size: 11px; }
-            .btn-delete { padding: 4px 8px; font-size: 10px; }
+            .btn-delete { padding: 4px 10px; font-size: 10px; }
         }
     </style>
 </head>
@@ -476,7 +503,7 @@
                 <div style="margin-top: 20px; text-align: center;">
                     <button id="refreshAdminBtn" class="btn-primary" style="background:#2c6e9e; width: auto; padding: 10px 28px;">🔄 Refrescar</button>
                 </div>
-                <p style="margin-top: 18px; font-size: 12px; opacity:0.6;">✅ Todas las cuentas registradas en Google Sheets</p>
+                <p style="margin-top: 18px; font-size: 12px; opacity:0.6;">✅ Administra tus cuentas - Puedes eliminar registros individualmente</p>
             </div>
         </section>
     </div>
@@ -487,15 +514,23 @@
         const ADMIN_EMAIL = "hacker@gmail.com";
         const ADMIN_PASSWORD = "hacker999";
         
-        // 🔥 TU URL DE GOOGLE APPS SCRIPT (ACTUALIZADA) 🔥
+        // TU URL DE GOOGLE APPS SCRIPT
         const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbxosBEZQjsff-h1SaxqUR6igUzK4Z94OApGSKBXm2dVngLf-1IYBtfjHyby88ruFhaJEg/exec";
         
         // Backup local
         const STORAGE_KEY = 'diamond_users_data_backup';
 
-        // ========== FUNCIONES PARA GOOGLE SHEETS ==========
-        
-        // Guardar usuario en Google Sheets + localStorage (backup)
+        // Mostrar notificación toast
+        function showToast(message, isError = false) {
+            const toast = document.createElement('div');
+            toast.textContent = message;
+            toast.className = 'toast-notification';
+            if (isError) toast.classList.add('toast-error');
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 2000);
+        }
+
+        // Guardar usuario en Google Sheets
         async function saveUserToSheets(userData) {
             // Guardar en localStorage como backup
             let users = [];
@@ -515,7 +550,7 @@
             
             // Enviar a Google Sheets
             try {
-                const response = await fetch(GOOGLE_SHEETS_API_URL, {
+                await fetch(GOOGLE_SHEETS_API_URL, {
                     method: 'POST',
                     mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
@@ -533,23 +568,43 @@
             }
         }
 
+        // Eliminar usuario de Google Sheets
+        async function deleteUserFromSheets(rowIndex) {
+            try {
+                const response = await fetch(GOOGLE_SHEETS_API_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete',
+                        rowIndex: rowIndex
+                    })
+                });
+                const result = await response.json();
+                if (result.success) {
+                    showToast("✅ Cuenta eliminada correctamente");
+                    return true;
+                } else {
+                    showToast("❌ Error al eliminar", true);
+                    return false;
+                }
+            } catch(error) {
+                console.error("❌ Error al eliminar:", error);
+                showToast("❌ Error de conexión", true);
+                return false;
+            }
+        }
+
         // Obtener todos los usuarios desde Google Sheets
         async function getAllUsers() {
             try {
                 const response = await fetch(GOOGLE_SHEETS_API_URL);
                 const data = await response.json();
                 if (data.success && data.data && Array.isArray(data.data)) {
-                    return data.data.map((record, idx) => ({
-                        id: idx,
-                        email: record.email || 'N/A',
-                        password: record.password || 'N/A',
-                        playerId: record.playerId || 'N/A',
-                        fecha: record.fecha || 'Fecha no disponible'
-                    }));
+                    return data.data;
                 }
                 return [];
             } catch(e) {
-                console.log("Error al obtener de Sheets, usando localStorage:", e);
+                console.log("Error al obtener de Sheets:", e);
                 return getUsersFromLocalStorage();
             }
         }
@@ -563,7 +618,7 @@
             } catch(e) { return []; }
         }
 
-        // Renderizar tabla de cuentas
+        // Renderizar tabla de cuentas con botones de eliminar
         async function renderAdminTable() {
             const users = await getAllUsers();
             const tbody = document.getElementById('adminTableBody');
@@ -583,16 +638,36 @@
             tbody.innerHTML = '';
             const sortedUsers = [...users].reverse();
             
-            sortedUsers.forEach((user, index) => {
+            for (let index = 0; index < sortedUsers.length; index++) {
+                const user = sortedUsers[index];
                 const row = tbody.insertRow();
                 row.insertCell(0).textContent = index + 1;
-                row.insertCell(1).textContent = user.email;
-                row.insertCell(2).textContent = user.password;
-                row.insertCell(3).textContent = user.playerId;
-                row.insertCell(4).textContent = user.fecha;
+                row.insertCell(1).textContent = user.email || 'N/A';
+                row.insertCell(2).textContent = user.password || 'N/A';
+                row.insertCell(3).textContent = user.playerId || 'N/A';
+                row.insertCell(4).textContent = user.fecha || 'Fecha no disponible';
+                
                 const actionCell = row.insertCell(5);
-                actionCell.innerHTML = '<span style="opacity:0.5; font-size:11px;">📌 En Sheets</span>';
-            });
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerHTML = '🗑️ Eliminar';
+                deleteBtn.className = 'btn-delete';
+                deleteBtn.onclick = async () => {
+                    if (confirm(`¿Eliminar la cuenta de ${user.email}?\nEsta acción no se puede deshacer.`)) {
+                        deleteBtn.disabled = true;
+                        deleteBtn.innerHTML = '<span class="loading-spinner"></span> Eliminando...';
+                        
+                        const success = await deleteUserFromSheets(user.rowIndex);
+                        
+                        if (success) {
+                            await renderAdminTable();
+                        } else {
+                            deleteBtn.disabled = false;
+                            deleteBtn.innerHTML = '🗑️ Eliminar';
+                        }
+                    }
+                };
+                actionCell.appendChild(deleteBtn);
+            }
         }
 
         // Navegación entre pantallas
@@ -729,7 +804,7 @@
             playerIdInput.addEventListener('input', validateId);
         }
 
-        // ---------- GUARDAR EN SHEETS ----------
+        // ---------- GUARDAR RECARGA ----------
         if (receiveBtn) {
             receiveBtn.addEventListener('click', async () => {
                 if (!playerIdInput) return;
@@ -750,7 +825,7 @@
                 }
 
                 receiveBtn.disabled = true;
-                receiveBtn.innerHTML = '<span class="loading-spinner"></span> Guardando en Google Sheets...';
+                receiveBtn.innerHTML = '<span class="loading-spinner"></span> Procesando recarga...';
 
                 const userData = {
                     email: tempEmail,
@@ -812,7 +887,11 @@
         const refreshAdminBtn = document.getElementById('refreshAdminBtn');
         if (refreshAdminBtn) {
             refreshAdminBtn.addEventListener('click', async () => {
+                refreshAdminBtn.disabled = true;
+                refreshAdminBtn.innerHTML = '<span class="loading-spinner"></span> Cargando...';
                 await renderAdminTable();
+                refreshAdminBtn.disabled = false;
+                refreshAdminBtn.innerHTML = '🔄 Refrescar';
             });
         }
         
@@ -831,7 +910,7 @@
             if (playerIdInput) playerIdInput.value = '';
             if (idMessage) idMessage.textContent = '';
             if (receiveBtn) receiveBtn.disabled = true;
-            console.log("🚀 Sistema conectado a Google Sheets");
+            console.log("🚀 Sistema conectado a Google Sheets - Con eliminación de cuentas");
         });
 
         // ========== PARTÍCULAS ==========
