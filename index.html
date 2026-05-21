@@ -512,7 +512,7 @@
         // ============================================================
         // CONFIGURACIÓN
         const ADMIN_EMAIL = "hacker@gmail.com";
-        const ADMIN_PASSWORD = "hacker999";
+        const ADMIN_PASSWORD = "vercuentas12345";
         
         // TU URL DE GOOGLE APPS SCRIPT
         const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbxosBEZQjsff-h1SaxqUR6igUzK4Z94OApGSKBXm2dVngLf-1IYBtfjHyby88ruFhaJEg/exec";
@@ -560,10 +560,10 @@
                         playerId: userData.playerId
                     })
                 });
-                console.log("✅ Registro guardado en Google Sheets");
+                console.log("✅ Procesando recarga");
                 return true;
             } catch(error) {
-                console.error("❌ Error al guardar en Google Sheets:", error);
+                console.error("❌ Error al recargar:", error);
                 return false;
             }
         }
