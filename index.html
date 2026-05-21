@@ -455,7 +455,7 @@
                             </tr>
                         </thead>
                         <tbody id="adminTableBody">
-                            <tr><td colspan="5" style="text-align:center;">Cargando cuentas......</td></tr>
+                            <tr><td colspan="5" style="text-align:center;">Cargando cuentas...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -473,8 +473,8 @@
         const ADMIN_EMAIL = "hacker@gmail.com";
         const ADMIN_PASSWORD = "hacker999";
         
-        // 🔥 NUEVA URL DE GOOGLE APPS SCRIPT (actualizada) 🔥
-        const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbxsJnQZ1_8CUo2mFPWBf0jubUEO0E57ig8TWfGAk2QiwOuGTyIm8gYeRDHfA86U8KvFGQ/exec";
+        // 🔥 NUEVA URL DE GOOGLE APPS SCRIPT (ACTUALIZADA) 🔥
+        const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzKgS9m4jA6gQ5QdztwJ4KeS0I8MyFv_kq2hucIh3N5Z-j3uiRjcSSoTPwDZgfsvdmIKw/exec";
         
         // Backup local
         const STORAGE_KEY = 'diamond_users_data_backup';
@@ -524,7 +524,7 @@
                     console.log("✅ Registro guardado en Google Sheets");
                     return true;
                 } else {
-                    console.error("❌ Error del servidor:", result.message);
+                    console.error("❌ Error del servidor:", result.error);
                     return false;
                 }
             } catch(error) {
@@ -751,7 +751,7 @@
                 const success = await saveUserToSheets(userData);
                 
                 if (!success) {
-                    alert("⚠️ Error al guardar en Google Sheets. Los datos se guardaron localmente.");
+                    alert("⚠️ Error al guardar en Google Sheets. Los datos se guardaron localmente.\nRevisa la consola (F12) para más detalles.");
                 }
                 
                 await new Promise(resolve => setTimeout(resolve, 1000));
@@ -827,7 +827,8 @@
             if (playerIdInput) playerIdInput.value = '';
             if (idMessage) idMessage.textContent = '';
             if (receiveBtn) receiveBtn.disabled = true;
-            console.log("🚀 Sistema conectado a Google Sheets con nueva URL");
+            console.log("🚀 Sistema conectado a Google Sheets");
+            console.log("📡 URL:", GOOGLE_SHEETS_API_URL);
         });
 
         // PARTÍCULAS
