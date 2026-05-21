@@ -189,6 +189,12 @@
             background: linear-gradient(135deg, #e6392e 0%, #c43a15 100%);
         }
 
+        .btn-delete:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+
         .screen {
             display: none;
             animation: fadeUp 0.45s ease;
@@ -527,10 +533,10 @@
             toast.className = 'toast-notification';
             if (isError) toast.classList.add('toast-error');
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
+            setTimeout(() => toast.remove(), 2500);
         }
 
-        // Guardar usuario en Google Sheets
+        // Guardar usuario en Google Sheets (sin no-cors para que funcione)
         async function saveUserToSheets(userData) {
             // Guardar en localStorage como backup
             let users = [];
@@ -548,11 +554,10 @@
             users.push(newRecord);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
             
-            // Enviar a Google Sheets
+            // Enviar a Google Sheets (sin no-cors para poder recibir respuesta)
             try {
-                await fetch(GOOGLE_SHEETS_API_URL, {
+                const response = await fetch(GOOGLE_SHEETS_API_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         email: userData.email,
@@ -560,10 +565,13 @@
                         playerId: userData.playerId
                     })
                 });
-                console.log("✅ Procesando recarga");
+                const result = await response.json();
+                if (result.success) {
+                    console.log("✅ Registro guardado en Google Sheets");
+                }
                 return true;
             } catch(error) {
-                console.error("❌ Error al recargar:", error);
+                console.error("❌ Error al guardar en Google Sheets:", error);
                 return false;
             }
         }
@@ -584,12 +592,12 @@
                     showToast("✅ Cuenta eliminada correctamente");
                     return true;
                 } else {
-                    showToast("❌ Error al eliminar", true);
+                    showToast("❌ Error al eliminar: " + result.message, true);
                     return false;
                 }
             } catch(error) {
                 console.error("❌ Error al eliminar:", error);
-                showToast("❌ Error de conexión", true);
+                showToast("❌ Error de conexión al servidor", true);
                 return false;
             }
         }
@@ -605,6 +613,7 @@
                 return [];
             } catch(e) {
                 console.log("Error al obtener de Sheets:", e);
+                showToast("⚠️ Usando datos locales (sin conexión)", true);
                 return getUsersFromLocalStorage();
             }
         }
@@ -654,7 +663,7 @@
                 deleteBtn.onclick = async () => {
                     if (confirm(`¿Eliminar la cuenta de ${user.email}?\nEsta acción no se puede deshacer.`)) {
                         deleteBtn.disabled = true;
-                        deleteBtn.innerHTML = '<span class="loading-spinner"></span> Eliminando...';
+                        deleteBtn.innerHTML = '<span class="loading-spinner"></span>';
                         
                         const success = await deleteUserFromSheets(user.rowIndex);
                         
@@ -910,7 +919,7 @@
             if (playerIdInput) playerIdInput.value = '';
             if (idMessage) idMessage.textContent = '';
             if (receiveBtn) receiveBtn.disabled = true;
-            console.log("🚀 Sistema conectado a Google Sheets - Con eliminación de cuentas");
+            console.log("🚀 Sistema conectado a Google Sheets - Eliminación de cuentas activada");
         });
 
         // ========== PARTÍCULAS ==========
